@@ -1,2 +1,4 @@
-# PecherskyDToE
-This repository contains my work by course of descipline Templates of Engineering
+# Оглавление
+1. [Описание](Описание)
+# Описание
+Данный репозиторий хранит решения по курсу Шаблоны Проектирования. Автор - Печерский Даниил
