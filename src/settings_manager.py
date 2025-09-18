@@ -3,7 +3,7 @@ import json
 
 from src.models.models import company_model
 
-class settings_manager:#добавить settings_model как прослойку между settings manager и company models. У класа settings_model будет лишь одно свойство - company
+class settings_manager:#добавить settings_model как прослойку между settings manager и company models. У класа settings_model будет лишь одно свойство - company. Отдельная ветка step
     __config_filename:str=""
     __company:company_model=None
 
