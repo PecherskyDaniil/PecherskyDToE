@@ -25,6 +25,8 @@ class company_model:
     @inn.setter
     def inn(self,value:str):
         if value.strip()!="":
+            if len(value)!=12:
+                raise SyntaxError("not valid length")
             self.__inn=value.strip()
     
     @property
@@ -34,6 +36,8 @@ class company_model:
     @account.setter
     def account(self,value:str):
         if value.strip()!="":
+            if len(value)!=11:
+                raise SyntaxError("not valid length")
             self.__account=value.strip()
 
     @property
@@ -43,6 +47,8 @@ class company_model:
     @coraccount.setter
     def coraccount(self,value:str):
         if value.strip()!="":
+            if len(value)!=11:
+                raise SyntaxError("not valid length")
             self.__coraccount=value.strip()
     
     @property
@@ -52,6 +58,8 @@ class company_model:
     @bic.setter
     def bic(self,value:str):
         if value.strip()!="":
+            if len(value)!=9:
+                raise SyntaxError("not valid length")
             self.__bic=value.strip()
     
     @property
@@ -60,6 +68,8 @@ class company_model:
     
     @property_type.setter
     def property_type(self,value:str):
+        if len(value)!=5:
+                raise SyntaxError("not valid length")
         if value.strip()!="":
             self.__property_type=value.strip()
 

@@ -40,7 +40,7 @@ class settings_manager:#добавить settings_model как прослойк�
             return False
         if len(item["cor_account"])!=11:
             return False
-        if len(item["property_type"])=5:
+        if len(item["property_type"])!=5:
             return False
         return True
 
