@@ -34,12 +34,14 @@ class TestReceiptModel:
         receipt = receipt_model(
             name="Тестовый рецепт",
             ingridients=sample_ingredients,
-            steps=sample_steps
+            steps=sample_steps,
+            time=30.0
         )
         
         assert receipt.name == "Тестовый рецепт"
         assert receipt.ingridients == sample_ingredients
         assert receipt.steps == sample_steps
+        assert receipt.time==30.0
     
     def test_valid_ingredients_setter(self, sample_ingredients):
         """
@@ -97,6 +99,24 @@ class TestReceiptModel:
         with pytest.raises(argument_exception, match="steps should be list of steps"):
             receipt.steps = "not_a_list"
     
+    def test_valid_time_setter(self):
+        """
+        Test valid set time
+        """
+        receipt = receipt_model()
+        receipt.time = 20.0
+        
+        assert receipt.time == 20.0
+    
+    def test_error_time_setter(self):
+        """
+        Test error set time
+        """
+        receipt = receipt_model()
+        
+        with pytest.raises(argument_exception):
+            receipt.time = "not_a_float"
+
     def test_error_steps_setter_element_type(self):
         """
         Test error set list steps
@@ -128,7 +148,8 @@ class TestReceiptModel:
         recipe = receipt_model(
             name="Торт Наполеон",
             ingridients=ingredients,
-            steps=steps
+            steps=steps,
+            time=50.0
         )
         
         # Проверяем целостность данных
@@ -144,6 +165,8 @@ class TestReceiptModel:
         assert recipe.ingridients[0].proportion_value == 2.0
         assert str(recipe.steps[0]) == "Подготовить ингредиенты"
 
+        assert recipe.time==50.0
+
     def test_valid_create_wafels(self):
         """
         Test valid create default wafels
@@ -152,6 +175,7 @@ class TestReceiptModel:
         assert wafels.name=="Вафли Хрустящие"
         assert len(wafels.steps)==8
         assert len(wafels.ingridients)==5
+        assert wafels.time==20.0
 
     def test_valid_create_hachapuri(self):
         """
@@ -161,4 +185,5 @@ class TestReceiptModel:
         assert hachapuri.name=="Хачапури по Адыгейски"
         assert len(hachapuri.steps)==16
         assert len(hachapuri.ingridients)==10
+        assert hachapuri.time==60.0
     
