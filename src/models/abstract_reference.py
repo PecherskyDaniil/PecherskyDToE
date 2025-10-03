@@ -1,7 +1,19 @@
 import json
 import uuid
 from enum import Enum,auto
-from abc import ABC
+from abc import ABC, abstractmethod
+
+def singleton_result(func):
+        result = None
+        initialized = False
+        
+        def wrapper(*args, **kwargs):
+            nonlocal result, initialized
+            if not initialized:
+                result = func(*args, **kwargs)
+                initialized = True
+            return result
+        return wrapper
 
 class argument_exception(Exception):
     """
@@ -145,6 +157,9 @@ class model_validator():
         Function that sets property limits
         value - list[limit_model]
         """
+        if value is None:
+            self.__limits=value
+            return
         if not isinstance(value,list):# value can be only list
             raise argument_exception("model validator accepts only list of limits") # else raise exception
         for limit in value: # check all elements of value
@@ -169,7 +184,8 @@ class model_validator():
         else: #else
             raise argument_exception("property name and value cant be None") # if rpoperty_name or property_value is None raise exception
 
-    def check_type(self,value,type):
+    @staticmethod
+    def check_type(value,type):
         """
         Function that checks type of value
         value - any
@@ -192,7 +208,7 @@ class abstract_reference(ABC):
     __uuid:str # unique identifier for object of system
     __name:str # name of model
     _prop_validator=model_validator([limit_model("name",Operator.LE,50),limit_model("uuid",Operator.GT,0)]) # name should be <=50, uuid >=0
-    
+    @abstractmethod
     def __init__(self,name:str):
         """
         Constructor of class
@@ -200,7 +216,7 @@ class abstract_reference(ABC):
         """
         self.__uuid=str(uuid.uuid4()) #create unique identifier
         self.name=name # set name
-   
+    
     @property
     def name(self)->str:
         """
@@ -214,7 +230,7 @@ class abstract_reference(ABC):
         Function that sets property name
         value - str
         """
-        if self._prop_validator.valid_property("name",value): # value should fits limit
+        if value==None or self._prop_validator.valid_property("name",value): # value should fits limit
             self.__name=value # if everything ok sets value
         else: #else
             raise argument_exception("wrong value for name") # else raises exception
@@ -246,6 +262,11 @@ class abstract_reference(ABC):
             return self.__uuid==obj.uuid #if uuid equals then objects equals
         else: #else
             raise operation_exception(f"cant compare with None object or object without 'uuid'") # else raise exception
+        
 
-    
-
+    @staticmethod
+    def create():
+        """
+        Function that creates instance of model
+        """
+        pass
