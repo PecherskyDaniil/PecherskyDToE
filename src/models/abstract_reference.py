@@ -4,15 +4,23 @@ from enum import Enum,auto
 from abc import ABC, abstractmethod
 
 def singleton_result(func):
+        """
+        Special Decorator that save result of function after first use and returns it
+        result:any - result of function
+        initialized:bool - value for check first use of function
+        """
         result = None
         initialized = False
         
         def wrapper(*args, **kwargs):
+            """
+            Function that replace original function
+            """
             nonlocal result, initialized
-            if not initialized:
+            if not initialized: #if not initialized calculate result
                 result = func(*args, **kwargs)
                 initialized = True
-            return result
+            return result #returns result
         return wrapper
 
 class argument_exception(Exception):
