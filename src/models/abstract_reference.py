@@ -264,7 +264,6 @@ class abstract_reference(ABC):
             raise operation_exception(f"cant compare with None object or object without 'uuid'") # else raise exception
         
 
-    @staticmethod
     def create():
         """
         Function that creates instance of model

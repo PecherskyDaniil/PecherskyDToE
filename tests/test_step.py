@@ -1,6 +1,6 @@
 import pytest
 
-from src.models.receipt_model import *
+from src.models.step import *
 
 
 class TestStep:

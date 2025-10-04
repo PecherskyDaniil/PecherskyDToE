@@ -1,7 +1,7 @@
 
 import pytest
 
-from src.models.receipt_model import *
+from src.models.proportion import *
 
 class TestProportion:
     """
