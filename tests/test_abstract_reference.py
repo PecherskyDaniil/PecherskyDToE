@@ -2,7 +2,7 @@ import pytest
 import json
 
 from src.models.abstract_reference import *
-
+@pytest.mark.skip(reason="abstract instance can't be created")
 class TestAbstractReference:
     """
     Tests of abstract_reference

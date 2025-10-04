@@ -2,6 +2,7 @@
 from .abstract_reference import *
 from .unit_model import unit_model
 from .range_group_model import range_group_model
+from functools import lru_cache
 class range_model(abstract_reference):
     """
     Class for work with range. Inherited from abstract_reference
@@ -82,3 +83,125 @@ class range_model(abstract_reference):
             self.__group = value
         else:
             raise argument_exception("group should be range_group_model")
+
+    @staticmethod
+    @singleton_result
+    def create_milk():
+        """
+        Creates default range milk
+        """
+        item=range_model.create("молоко","Молоко пастеризованное натуральное",unit_model.create_litr(),range_group_model.create_ingredients())
+        return item
+
+    @staticmethod
+    @singleton_result
+    def create_salt():
+        """
+        Creates default range salt
+        """
+        item=range_model.create("соль","Соль пищевая кристализованная",unit_model.create_killogramm(),range_group_model.create_ingredients())
+        return item
+
+    @staticmethod
+    @singleton_result
+    def create_sugar():
+        """
+        Creates default range sugar
+        """
+        item=range_model.create("сахар","Сахар песок",unit_model.create_killogramm(),range_group_model.create_ingredients())
+        return item
+
+    @staticmethod
+    @singleton_result
+    def create_flour():
+        """
+        Creates default range flour
+        """
+        item=range_model.create("мука","Мука пшеничная 1 сорт",unit_model.create_killogramm(),range_group_model.create_ingredients())
+        return item
+    
+    @staticmethod
+    @singleton_result
+    def create_egg():
+        """
+        Creates default range egg
+        """
+        item=range_model.create("яйцо","Яйцо куринное",unit_model.create_item(),range_group_model.create_ingredients())
+        return item
+    
+    @staticmethod
+    @singleton_result
+    def create_butter():
+        """
+        Creates default range butter
+        """
+        item=range_model.create("масло сливочное","Масло сливочное натуральное",unit_model.create_gramm(),range_group_model.create_ingredients())
+        return item
+    
+    @staticmethod
+    @singleton_result
+    def create_vanilin():
+        """
+        Creates default range vanilin
+        """
+        item=range_model.create("ванилин","Ванилин пищевой ароматизатор",unit_model.create_gramm(),range_group_model.create_ingredients())
+        return item
+
+    @staticmethod
+    @singleton_result
+    def create_water():
+        """
+        Creates default range water
+        """
+        item=range_model.create("вода","Вода питьевая негазированная",unit_model.create_millilitr(),range_group_model.create_ingredients())
+        return item
+
+    @staticmethod
+    @singleton_result
+    def create_oil():
+        """
+        Creates default range oil
+        """
+        item=range_model.create("масло растительное","Масло растительное подсолнечное",unit_model.create_millilitr(),range_group_model.create_ingredients())
+        return item
+
+    @staticmethod
+    @singleton_result
+    def create_yeasts():
+        """
+        Creates default range yests
+        """
+        item=range_model.create("дрожжи","Дрожжи сухие",unit_model.create_gramm(),range_group_model.create_ingredients())
+        return item
+
+    @staticmethod
+    @singleton_result
+    def create_mozarella_cheese():
+        """
+        Creates default range mozarella cheese
+        """
+        item=range_model.create("моцарелла сыр","Сыр моцарелла",unit_model.create_gramm(),range_group_model.create_ingredients())
+        return item
+    
+    @staticmethod
+    @singleton_result
+    def create_adugey_cheese():
+        """
+        Creates default range adugey cheese
+        """
+        item=range_model.create("адыгейский сыр","Адыгейский сыр",unit_model.create_gramm(),range_group_model.create_ingredients())
+        return item
+
+
+    @staticmethod
+    def create(name:str,full_name:str,unit:unit_model,range_group:range_group_model):
+        """
+        Creates range 
+        name:str
+        full_name:str
+        unit:unit_model
+        range_group:range_group_model
+        """
+        return range_model(name,full_name,unit,range_group)
+    
+    

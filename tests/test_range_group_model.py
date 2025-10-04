@@ -38,3 +38,20 @@ class TestRangeGroupModel:
         #получение ошибки
         with pytest.raises(argument_exception):
             range_g.name="1"*51
+    
+    def test_valid_create_ingridients_range_group(self):
+        """
+        Test on create ingridient range_group_model
+        """
+        ingridients=range_group_model.create_ingredients()
+
+        assert ingridients.name=="ингридиенты"
+    
+    def test_valid_compare_create_ingridients_range_group(self):
+        """
+        Test on same objects of ingridients
+        """
+        ingridients1=range_group_model.create_ingredients()
+        ingridients2=range_group_model.create_ingredients()
+        
+        assert ingridients1 is ingridients2
