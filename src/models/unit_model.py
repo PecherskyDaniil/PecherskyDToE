@@ -10,6 +10,7 @@ class unit_model(abstract_reference):
     __base_unit=None
     __coef:float
 
+    __values:dict={}
     def __init__(self,name:str=None,base_unit=None,coef:float=1.0):
         """
         Constructor of class
@@ -70,50 +71,58 @@ class unit_model(abstract_reference):
         """
         return f"1 {self.name} = {self.coef} {self.base_unit if self.base_unit is not None else '' }"
     
+    def _create_default_value(name:str,base_unit,coef:float):
+        """
+        Function that creates deafult instances and save it in class
+        """
+        if name not in unit_model.__values.keys():
+            unit_model.__values[name]=unit_model.create(name,base_unit,coef)
+        return unit_model.__values[name]
+
     @staticmethod
-    @singleton_result
+    #@singleton_result
     def create_killogramm():
         """
         Creates default unit killogramm
         """
         inner_gramm=unit_model.create_gramm()
-        item=unit_model.create("килограмм",inner_gramm,1000.0)
+        item=unit_model._create_default_value("килограмм",inner_gramm,1000.0)
         return item
     
     @staticmethod
-    @singleton_result
+    #@singleton_result
     def create_gramm():
         """
         Creates default unit gramm
         """
-        item=unit_model.create("грамм",None,1.0)
+        item=unit_model._create_default_value("грамм",None,1.0)
         return item
     
     @staticmethod
-    @singleton_result
+    #@singleton_result
     def create_litr():
         """
         Creates default unit litr
         """
-        item=unit_model.create("литр",None,1.0)
+        item=unit_model._create_default_value("литр",None,1.0)
         return item
 
     @staticmethod
-    @singleton_result
+    #@singleton_result
     def create_millilitr():
         """
         Creates default unit millilitr
         """
-        item=unit_model.create("миллилитр",unit_model.create_litr(),0.001)
+        item=unit_model._create_default_value("миллилитр",unit_model.create_litr(),0.001)
         return item
     
     @staticmethod
-    @singleton_result
+    #@singleton_result
     def create_item():
         """
         Creates default unit item
         """
-        item=unit_model.create("штука",None,1.0)
+        item=unit_model._create_default_value("штука",None,1.0)
         return item
 
     @staticmethod
