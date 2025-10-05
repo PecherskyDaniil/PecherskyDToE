@@ -14,7 +14,6 @@ class range_model(abstract_reference):
     __unit:unit_model=None
     __group:range_group_model=None
 
-    __values:dict={}
     def __init__(self,name:str,full_name:str,unit:unit_model,group:range_group_model):
         """
         Constructor of class
@@ -85,121 +84,6 @@ class range_model(abstract_reference):
             self.__group = value
         else:
             raise argument_exception("group should be range_group_model")
-
-    def _create_default_value(name:str,full_name:str,unit:unit_model,range_group:range_group_model):
-        """
-        Function that creates deafult instances and save it in class
-        """
-        if name not in range_model.__values.keys():
-            range_model.__values[name]=range_model.create(name,full_name,unit,range_group)
-        return range_model.__values[name]
-    
-    @staticmethod
-    #@singleton_result
-    def create_milk():
-        """
-        Creates default range milk
-        """
-        return range_model._create_default_value("молоко","Молоко пастеризованное натуральное",unit_model.create_litr(),range_group_model.create_ingredients())
-
-    @staticmethod
-    #@singleton_result
-    def create_salt():
-        """
-        Creates default range salt
-        """
-        return range_model._create_default_value("соль","Соль пищевая кристализованная",unit_model.create_killogramm(),range_group_model.create_ingredients())
-
-
-    @staticmethod
-    #@singleton_result
-    def create_sugar():
-        """
-        Creates default range sugar
-        """
-        return range_model._create_default_value("сахар","Сахар песок",unit_model.create_killogramm(),range_group_model.create_ingredients())
-
-
-    @staticmethod
-    #@singleton_result
-    def create_flour():
-        """
-        Creates default range flour
-        """
-        return range_model._create_default_value("мука","Мука пшеничная 1 сорт",unit_model.create_killogramm(),range_group_model.create_ingredients())
-
-    
-    @staticmethod
-    #@singleton_result
-    def create_egg():
-        """
-        Creates default range egg
-        """
-        return range_model._create_default_value("яйцо","Яйцо куринное",unit_model.create_item(),range_group_model.create_ingredients())
-
-    
-    @staticmethod
-    #@singleton_result
-    def create_butter():
-        """
-        Creates default range butter
-        """
-        return range_model._create_default_value("масло сливочное","Масло сливочное натуральное",unit_model.create_gramm(),range_group_model.create_ingredients())
-
-    
-    @staticmethod
-    #@singleton_result
-    def create_vanilin():
-        """
-        Creates default range vanilin
-        """
-        return range_model._create_default_value("ванилин","Ванилин пищевой ароматизатор",unit_model.create_gramm(),range_group_model.create_ingredients())
-
-
-    @staticmethod
-    #@singleton_result
-    def create_water():
-        """
-        Creates default range water
-        """
-        return range_model._create_default_value("вода","Вода питьевая негазированная",unit_model.create_millilitr(),range_group_model.create_ingredients())
-
-
-    @staticmethod
-    #@singleton_result
-    def create_oil():
-        """
-        Creates default range oil
-        """
-        return range_model._create_default_value("масло растительное","Масло растительное подсолнечное",unit_model.create_millilitr(),range_group_model.create_ingredients())
-
-
-    @staticmethod
-    #@singleton_result
-    def create_yeasts():
-        """
-        Creates default range yests
-        """
-        return range_model._create_default_value("дрожжи","Дрожжи сухие",unit_model.create_gramm(),range_group_model.create_ingredients())
-
-
-    @staticmethod
-    #@singleton_result
-    def create_mozarella_cheese():
-        """
-        Creates default range mozarella cheese
-        """
-        return range_model._create_default_value("моцарелла сыр","Сыр моцарелла",unit_model.create_gramm(),range_group_model.create_ingredients())
-
-    
-    @staticmethod
-    #@singleton_result
-    def create_adugey_cheese():
-        """
-        Creates default range adugey cheese
-        """
-        return range_model._create_default_value("адыгейский сыр","Адыгейский сыр",unit_model.create_gramm(),range_group_model.create_ingredients())
-
 
 
     @staticmethod

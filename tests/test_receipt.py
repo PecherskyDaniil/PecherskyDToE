@@ -1,7 +1,7 @@
 import pytest
 
 from src.models.receipt_model import *
-
+from src.models.unit_model import *
 class TestReceiptModel:
     
     @pytest.fixture
@@ -9,8 +9,8 @@ class TestReceiptModel:
         """
         Fixture of sample ingridients
         """
-        range1 = range_model.create_flour()
-        range2 = range_model.create_butter()
+        range1 = range_model.create("A","A",unit_model.create("name",None,1.0),range_group_model.create("name"))
+        range2 = range_model.create("B","B",unit_model.create("name",None,1.0),range_group_model.create("name"))
         return [
             proportion(range1, 2.0),
             proportion(range2, 1.5)
@@ -139,9 +139,9 @@ class TestReceiptModel:
         
         # Создаем ингредиенты
         ingredients = [
-            proportion(range_model.create_butter(), 2.0),
-            proportion(range_model.create_flour(), 1.5),
-            proportion(range_model.create_milk(), 100.0)
+            proportion(range_model.create("A","A",unit_model.create("gramm",None,1.0),range_group_model.create("something")), 2.0),
+            proportion(range_model.create("B","B",unit_model.create("gramm",None,1.0),range_group_model.create("something")), 1.5),
+            proportion(range_model.create("C","C",unit_model.create("gramm",None,1.0),range_group_model.create("something")), 100.0)
         ]
         
         # Создаем рецепт
@@ -167,23 +167,4 @@ class TestReceiptModel:
 
         assert recipe.time==50.0
 
-    def test_valid_create_wafels(self):
-        """
-        Test valid create default wafels
-        """
-        wafels=receipt_model.create_wafels_receipt()
-        assert wafels.name=="Вафли Хрустящие"
-        assert len(wafels.steps)==8
-        assert len(wafels.ingridients)==5
-        assert wafels.time==20.0
-
-    def test_valid_create_hachapuri(self):
-        """
-        Test valid create default hachapuri
-        """
-        hachapuri=receipt_model.create_hachapuri()
-        assert hachapuri.name=="Хачапури по Адыгейски"
-        assert len(hachapuri.steps)==16
-        assert len(hachapuri.ingridients)==10
-        assert hachapuri.time==60.0
     
