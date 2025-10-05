@@ -1,4 +1,6 @@
 from .abstract_reference import *
+
+from functools import lru_cache
 class unit_model(abstract_reference):
     """
     Class for work with unit. Inherited from abstract_reference
@@ -7,9 +9,7 @@ class unit_model(abstract_reference):
     """
     __base_unit=None
     __coef:float
-
-
-    def __init__(self,name:str,base_unit,coef:float):
+    def __init__(self,name:str=None,base_unit=None,coef:float=1.0):
         """
         Constructor of class
         name - str
@@ -68,3 +68,14 @@ class unit_model(abstract_reference):
         Function that return string recount of unit
         """
         return f"1 {self.name} = {self.coef} {self.base_unit if self.base_unit is not None else '' }"
+
+    @staticmethod
+    def create(name:str,base,coef:float):
+        """
+        Creates unit 
+        name:str
+        base:unit_model|None
+        coef:float
+        """
+        item=unit_model(name,base,coef)
+        return item

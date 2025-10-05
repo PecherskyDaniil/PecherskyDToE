@@ -2,6 +2,7 @@
 from .abstract_reference import *
 from .unit_model import unit_model
 from .range_group_model import range_group_model
+from functools import lru_cache
 class range_model(abstract_reference):
     """
     Class for work with range. Inherited from abstract_reference
@@ -12,6 +13,7 @@ class range_model(abstract_reference):
     __full_name:str=""
     __unit:unit_model=None
     __group:range_group_model=None
+
     def __init__(self,name:str,full_name:str,unit:unit_model,group:range_group_model):
         """
         Constructor of class
@@ -82,3 +84,17 @@ class range_model(abstract_reference):
             self.__group = value
         else:
             raise argument_exception("group should be range_group_model")
+
+
+    @staticmethod
+    def create(name:str,full_name:str,unit:unit_model,range_group:range_group_model):
+        """
+        Creates range 
+        name:str
+        full_name:str
+        unit:unit_model
+        range_group:range_group_model
+        """
+        return range_model(name,full_name,unit,range_group)
+    
+    

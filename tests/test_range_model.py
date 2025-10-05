@@ -71,5 +71,18 @@ class TestRangeModel:
         #получение ошибки
         with pytest.raises(argument_exception):
             new_range=range_model("Milk","Cow milk",litr,"wrong")
-
     
+    def test_valid_create_method_directly(self):
+        """
+        Test create instance range
+        """
+        # Тестируем базовый метод create напрямую
+        test_unit = unit_model.create("gramm",None,1.0)
+        test_group = range_group_model.create("ingridients")
+        
+        custom_item = range_model.create("тест", "Тестовый продукт", test_unit, test_group)
+        
+        assert custom_item.name == "тест"
+        assert custom_item.full_name == "Тестовый продукт"
+        assert custom_item.unit is test_unit
+        assert custom_item.group is test_group

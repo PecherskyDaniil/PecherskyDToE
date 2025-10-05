@@ -55,3 +55,12 @@ class TestUnitModel:
         with pytest.raises(argument_exception):
             gramm=unit_model("gramm",None,"wrong")    
     
+    def test_valid_create_static_func_unit_model(self):
+        """
+        Test valid create unit
+        """
+        unit=unit_model.create("мегаграмм",None,1.0)
+        assert unit.name=="мегаграмм"
+        assert unit.base_unit is None
+        assert unit.coef==1.0
+    
