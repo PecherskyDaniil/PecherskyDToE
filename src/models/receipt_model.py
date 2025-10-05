@@ -13,6 +13,8 @@ class receipt_model(abstract_reference):
     __ingridients:list[proportion]
     __steps:list[step]
     __time:float
+
+    __values:dict={}
     def __init__(self,name:str=None,ingridients:list[proportion]=None,steps:list[step]=None,time=None):
         """
         Constructor of class
@@ -89,8 +91,16 @@ class receipt_model(abstract_reference):
         else:
             raise argument_exception("time should be float")
 
+    def _create_default_value(name:str,ingridients:list[proportion],steps:list[step],time:float):
+        """
+        Function that creates deafult instances and save it in class
+        """
+        if name not in receipt_model.__values.keys():
+            receipt_model.__values[name]=receipt_model.create(name,ingridients,steps,time)
+        return receipt_model.__values[name]
+    
     @staticmethod
-    @singleton_result
+    #@singleton_result
     def create_wafels_receipt():
         """
         Function that creates default receipt of wafels
@@ -113,11 +123,11 @@ class receipt_model(abstract_reference):
                           " Можно класть немного меньше теста, тогда вафли будут меньше и их получится больше."))
         steps.append(step("Пеките вафли несколько минут до золотистого цвета. Осторожно откройте вафельницу, она очень горячая! Снимите вафлю лопаткой. Горячая она очень мягкая, как блинчик."))
         
-        item=receipt_model.create("Вафли Хрустящие",proportions,steps,20.0)
+        item=receipt_model._create_default_value("Вафли Хрустящие",proportions,steps,20.0)
         return item
 
     @staticmethod
-    @singleton_result
+    #@singleton_result
     def create_hachapuri():
         """
         Function that creates default receipt of hachapuri
@@ -150,7 +160,7 @@ class receipt_model(abstract_reference):
         steps.append(step("Разогреть духовку до 220°C, выпекать до золотистой корочки"))
         steps.append(step("Достать хачапури за 5 минут до готовности, сделать углубление в начинке и влить яйцо"))
         steps.append(step("Вернуть в духовку на несколько минут до схватывания белка"))
-        item=receipt_model.create("Хачапури по Адыгейски",proportions,steps,60.0)
+        item=receipt_model._create_default_value("Хачапури по Адыгейски",proportions,steps,60.0)
         return item
 
     @staticmethod
