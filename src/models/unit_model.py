@@ -1,6 +1,5 @@
 from .abstract_reference import *
-
-from functools import lru_cache
+from ..dto.unit_dto import unit_dto
 class unit_model(abstract_reference):
     """
     Class for work with unit. Inherited from abstract_reference
@@ -78,4 +77,29 @@ class unit_model(abstract_reference):
         coef:float
         """
         item=unit_model(name,base,coef)
+        return item
+    
+    @staticmethod
+    def from_dto(dto:unit_dto, cache:dict):
+        """
+        Function that creates instance from dto object
+        """
+        model_validator.validate(dto, unit_dto)
+        model_validator.validate(cache, dict)
+        base_unit =  cache[ dto.base_id ] if dto.base_id in cache else None
+        item  = unit_model.create(dto.name, base_unit, dto.coef)
+        return item
+    
+    def to_dto(model:"unit_model"):
+        """
+        Function that convert instance to dto
+        """
+        item=unit_dto()
+        item.name=model.name
+        item.id=model.uuid
+        if model.base_unit is not None:
+            item.base_id=model.base_unit.uuid
+        else:
+            item.base_id=model.base_unit
+        item.coef=model.coef
         return item

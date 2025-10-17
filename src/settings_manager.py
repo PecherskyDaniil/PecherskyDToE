@@ -37,6 +37,13 @@ class settings_manager:
         return self.__config_filename
     
     @property
+    def settings(self)->settings_model:
+        """
+        Function that returns settings
+        """
+        return self.__settings
+
+    @property
     def company_settings(self)->company_model:
         """
         Function that returns company settings
@@ -69,9 +76,13 @@ class settings_manager:
                 self.__settings.company_settings.account=item["account"]
                 self.__settings.company_settings.coraccount=item["coraccount"]
                 self.__settings.company_settings.property_type=item["property_type"]
-                return True
             else:
                 return False
+            if "api" in data.keys():
+                self.__settings.format=data["api"]["default_response_format"]
+            else:
+                return False
+            return True
         except Exception as e:
             return False
     

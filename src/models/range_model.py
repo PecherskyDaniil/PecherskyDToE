@@ -2,7 +2,7 @@
 from .abstract_reference import *
 from .unit_model import unit_model
 from .range_group_model import range_group_model
-from functools import lru_cache
+from ..dto.range_dto import range_dto
 class range_model(abstract_reference):
     """
     Class for work with range. Inherited from abstract_reference
@@ -97,4 +97,27 @@ class range_model(abstract_reference):
         """
         return range_model(name,full_name,unit,range_group)
     
+    @staticmethod
+    def from_dto(dto:range_dto, cache:dict):
+        """
+        Function that creates instance from dto object
+        """
+        model_validator.validate(dto, range_dto)
+        model_validator.validate(cache, dict)
+        unit =  cache[ dto.unit_id ] if dto.unit_id in cache else None
+        group= cache[ dto.group_id ] if dto.group_id in cache else None
+        item  = range_model.create(dto.name,dto.full_name,unit,group)
+        return item
+
+    def to_dto(model:"range_model"):
+        """
+        Function that convert instance to dto
+        """
+        item=range_dto()
+        item.name=model.name
+        item.id=model.uuid
+        item.unit_id=model.unit.uuid
+        item.group_id=model.group.uuid
+        item.full_name=model.full_name
+        return item
     

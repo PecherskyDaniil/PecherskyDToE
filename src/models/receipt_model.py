@@ -2,7 +2,10 @@ from .abstract_reference import *
 from .range_model import range_model
 from .range_group_model import range_group_model
 from .step import step
-from.proportion import proportion
+from .proportion import proportion
+from ..dto.receipt_dto import receipt_dto
+from ..dto.proportion_dto import proportion_dto
+from ..dto.step_dto import step_dto
 
 class receipt_model(abstract_reference):
     """
@@ -96,3 +99,39 @@ class receipt_model(abstract_reference):
         Function that creates receipt
         """
         return receipt_model(name,ingridients,steps,time)
+
+    @staticmethod
+    def from_dto(dto:receipt_dto, cache:dict):
+        """
+        Function that convert instance from dto
+        """
+        model_validator.validate(dto, receipt_dto)
+        model_validator.validate(cache, dict)
+        
+        steps=[]
+        for step_obj in dto.steps:
+            steps.append(step(step_obj["step_description"]))
+        ingridients=[]
+        for receipt_item in dto.ingridients:
+            range_obj=cache[receipt_item["range_id"]] if receipt_item["range_id"] in cache else None
+            ingridients.append(proportion(range_obj,receipt_item["proportion_value"]))
+        item = receipt_model.create(dto.name,ingridients,steps,dto.time)
+        return item
+
+    def to_dto(model:"receipt_model"):
+        """
+        Function that convert instance to dto
+        """
+        item=receipt_dto()
+        item.name=model.name
+        item.id=model.uuid
+        ingridients=[]
+        for proportion in model.ingridients:
+            ingridients.append(proportion.to_dto(proportion))
+        item.ingridients=ingridients
+        steps=[]
+        for step in model.steps:
+            steps.append(step.to_dto(step))
+        item.steps=steps
+        item.time=model.time
+        return item
