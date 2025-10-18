@@ -8,8 +8,9 @@ from src.reposity import reposity
 from src.logics.response_formats import response_formats
 app = connexion.FlaskApp(__name__)
 settings_manager_instance=settings_manager("config.json")
+factory_entity=factory_entities()
 load_result=settings_manager_instance.load()
-
+factory_entity.default_value=settings_manager_instance.response_format
 if not(load_result):
     raise Exception("cant load config file")
 
@@ -35,7 +36,7 @@ def get_model_data(model:str,format:str):
             content_type="text/plain"
         )
     try:
-        result_format=settings_manager_instance.factory_entity.create(format)()
+        result_format=factory_entity.create(format)()
         result=result_format.create(list(start_service_instance.reposity.data[model].values()))
         return Response(
             response=result,
@@ -68,7 +69,7 @@ def get_model_default_data(model:str):
             content_type="text/plain"
         )
     try:
-        result_format=settings_manager_instance.factory_entity.create_default()()
+        result_format=factory_entity.create_default()()
         result=result_format.create(list(start_service_instance.reposity.data[model].values()))
         return Response(
             response=result,
