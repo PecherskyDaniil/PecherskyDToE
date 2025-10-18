@@ -6,6 +6,14 @@ class response_xml(abstract_response):
     """
     Class for response xml formatter
     """
+
+    @staticmethod
+    def response_type():
+        """
+        Type of API response
+        """
+        return "application/xml"
+
     # Сформировать xml
     def create(self, data: list):
         """

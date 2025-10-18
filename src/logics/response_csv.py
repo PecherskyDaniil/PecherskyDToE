@@ -7,6 +7,13 @@ class response_csv(abstract_response):
     Class for response csv formatter
     """
     # Сформировать CSV
+    @staticmethod
+    def response_type():
+        """
+        Type of API response
+        """
+        return "text/plain"
+    
     def create(self, data: list):
         """
         Function that convert data to csv format

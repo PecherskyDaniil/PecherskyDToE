@@ -8,6 +8,14 @@ class response_json(abstract_response):
     """
     Class for response json formatter
     """
+
+    @staticmethod
+    def response_type():
+        """
+        Type of API response
+        """
+        return "application/json"
+    
     # Сформировать CSV
     def create(self, data: list):
         """

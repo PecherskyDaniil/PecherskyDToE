@@ -6,6 +6,14 @@ class response_markdown(abstract_response):
     """
     Class for response markdown formatter
     """
+
+    @staticmethod
+    def response_type():
+        """
+        Type of API response
+        """
+        return "text/plain"
+
     # Сформировать markdown
     def create(self, data: list):
         """
