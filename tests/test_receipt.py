@@ -167,4 +167,57 @@ class TestReceiptModel:
 
         assert recipe.time==50.0
 
+    def test_valid_init_from_dto_receipt(self):
+        """
+        Test on valid init from dto object receipt_model
+        """
+        #Подготовка
+        cache={
+            "123":unit_model("gramm",None,1.0),
+            "234":range_group_model("products"),
+        }
+        cache["345"]=range_model("sugar","sweet sugar",cache["123"],cache["234"])
+        cache["456"]=range_model("salt","salty salt",cache["123"],cache["234"])
+        #Создание
+        receipt_dto_obj=receipt_dto()
+        receipt_dto_obj.name="type_receipt"
+        receipt_dto_obj.ingridients=[
+            {"range_id":"345","proportion_value":12.3},
+            {"range_id":"456","proportion_value":32.1},
+            ]
+        receipt_dto_obj.steps=[
+            {"step_description":"meh"},
+            {"step_description":"oh"}
+        ]
+        receipt_dto_obj.time=20.0
+        #Присваивание
+        receipt_obj=receipt_model.from_dto(receipt_dto_obj,cache)
+        #Проверка
+        assert receipt_obj.name=="type_receipt"
+        assert len(receipt_obj.ingridients)==2
+        assert len(receipt_obj.steps) == 2
+        assert receipt_obj.time == 20.0
     
+    def test_valid_convert_to_dto_receipt(self):
+        """
+        Test on valid convert to dto object range_group_model
+        """
+        #Подготовка
+        cache={
+            "123":unit_model("gramm",None,1.0),
+            "234":range_group_model("products"),
+        }
+        cache["345"]=range_model("sugar","sweet sugar",cache["123"],cache["234"])
+        cache["456"]=range_model("salt","salty salt",cache["123"],cache["234"])
+        #Создание
+        receipt_obj=receipt_model("type_receipt",
+                                  [proportion(cache["345"],12.3),proportion(cache["456"],32.1)],
+                                  [step("meh"),step("oh")],
+                                  20.0)     
+        #Присваивание
+        receipt_dto_obj=receipt_obj.to_dto()
+        #Проверка
+        assert receipt_dto_obj.name=="type_receipt"
+        assert len(receipt_dto_obj.ingridients)==2
+        assert len(receipt_dto_obj.steps) == 2
+        assert receipt_dto_obj.time == 20.0

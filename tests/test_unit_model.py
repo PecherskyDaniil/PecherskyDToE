@@ -3,7 +3,7 @@ import json
 
 from src.models.abstract_reference import *
 from src.models.unit_model import unit_model
-
+from src.dto.unit_dto import unit_dto
 class TestUnitModel:
     """
     Tests for unit_model
@@ -63,4 +63,40 @@ class TestUnitModel:
         assert unit.name=="мегаграмм"
         assert unit.base_unit is None
         assert unit.coef==1.0
+    
+    def test_valid_init_from_dto_range(self):
+        """
+        Test on valid init from dto object unit_model
+        """
+        #Подготовка
+        cache={
+            "123":unit_model("gramm",None,1.0),
+        }
+        #Создание
+        unit_dto_obj=unit_dto()
+        unit_dto_obj.name="kilo"
+        unit_dto_obj.base_id="123"
+        unit_dto_obj.coef=1000.0
+        #Присваивание
+        unit_obj=unit_model.from_dto(unit_dto_obj,cache)
+        #Проверка
+        assert unit_obj.name=="kilo"
+        assert unit_obj.base_unit is cache["123"]
+        assert unit_obj.coef == 1000.0
+    
+    def test_valid_convert_to_dto_unit(self):
+        """
+        Test on valid convert to dto object unit_model
+        """
+        cache={
+            "123":unit_model("gramm",None,1.0),
+        }
+        #Создание
+        unit_obj=unit_model("kilo",cache["123"],1000.0)
+        #Присваивание
+        unit_dto_obj=unit_obj.to_dto()
+        #Проверка
+        assert unit_dto_obj.name=="kilo"
+        assert unit_dto_obj.base_id==cache["123"].uuid
+        assert unit_dto_obj.coef==1000.0
     

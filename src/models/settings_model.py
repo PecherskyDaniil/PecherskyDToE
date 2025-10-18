@@ -1,5 +1,6 @@
 from .abstract_reference import *
 from .company_model import company_model
+from ..logics.abstract_response import abstract_response
 
 class settings_model(abstract_reference):
     """
@@ -7,7 +8,6 @@ class settings_model(abstract_reference):
     company - company_model : company
     """
     __company:company_model=None
-
     def __init__(self,name:str="settings"):
         """
         Constructor of class
@@ -24,7 +24,7 @@ class settings_model(abstract_reference):
         """
         return self.__company
 
-    
+
     def default(self):
         """
         Function that creates company_model and sets it to property company

@@ -1,5 +1,5 @@
 from .abstract_reference import *
-
+from ..dto.step_dto import step_dto
 
 class step():
     """
@@ -39,3 +39,9 @@ class step():
         Magic function that returns string value of class object
         """
         return str(self.step_description)
+
+    @staticmethod
+    def to_dto(model:"step"):
+        item=step_dto()
+        item.step_description=model.step_description
+        return item

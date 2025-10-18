@@ -203,7 +203,10 @@ class model_validator():
             return True #if it is return true
         else: #else
             return False # return false
-
+    @staticmethod
+    def validate(value,type):
+        if not(model_validator.check_type(value,type)):
+            raise argument_exception(f"value should be {type}")
 class abstract_reference(ABC):
     """
     Abstract class that parent for all models of system
@@ -277,3 +280,6 @@ class abstract_reference(ABC):
         Function that creates instance of model
         """
         pass
+
+    #def __str__(self):
+    #    return self.uuid

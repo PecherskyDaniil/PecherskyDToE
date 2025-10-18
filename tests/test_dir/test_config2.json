@@ -7,5 +7,9 @@
             "coraccount":"12345678910",
             "bic":"123456789",
             "property_type":"OAOAO"
+        },
+    "api":
+        {
+            "default_response_format":"csv"
         }
 }
