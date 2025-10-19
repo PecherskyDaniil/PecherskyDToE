@@ -8,6 +8,7 @@ class settings_model(abstract_reference):
     company - company_model : company
     """
     __company:company_model=None
+    __response_format:str
     def __init__(self,name:str="settings"):
         """
         Constructor of class
@@ -16,7 +17,18 @@ class settings_model(abstract_reference):
         super().__init__(name)
         self.default()
 
-    
+    @property
+    def response_format(self)->str:
+        """
+        Function that returns property response_format
+        """
+        return self.__response_format
+    @response_format.setter
+    def response_format(self,value:str):
+        """
+        Setter for property response_format
+        """
+        self.__response_format=value
     @property
     def company_settings(self)->company_model:
         """

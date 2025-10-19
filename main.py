@@ -10,7 +10,7 @@ app = connexion.FlaskApp(__name__)
 settings_manager_instance=settings_manager("config.json")
 factory_entity=factory_entities()
 load_result=settings_manager_instance.load()
-factory_entity.default_value=settings_manager_instance.response_format
+factory_entity.default_value=settings_manager_instance.settings.response_format
 if not(load_result):
     raise Exception("cant load config file")
 

@@ -13,7 +13,7 @@ class settings_manager:
     """
     __config_filename:str=""
     __settings:settings_model=None
-    __response_format:str
+    
     def __init__(self,config_filename:str=""):
         """
         Constructor of class
@@ -37,12 +37,7 @@ class settings_manager:
         """
         return self.__config_filename
     
-    @property
-    def response_format(self)->factory_entities:
-        """
-        Function that returns property response_format
-        """
-        return self.__response_format
+    
 
     @property
     def settings(self)->settings_model:
@@ -51,12 +46,7 @@ class settings_manager:
         """
         return self.__settings
 
-    @response_format.setter
-    def factory_entity(self,value:factory_entities):
-        """
-        Setter for property response_format
-        """
-        self.__response_format=value
+    
 
     @property
     def company_settings(self)->company_model:
@@ -94,11 +84,12 @@ class settings_manager:
             else:
                 return False
             if "api" in data.keys():
-                self.__response_format=data["api"]["default_response_format"]
+                self.__settings.response_format=data["api"]["default_response_format"]
             else:
                 return False
             return True
         except Exception as e:
+            
             return False
     
     def convert(self,data:dict):
