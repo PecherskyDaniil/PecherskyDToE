@@ -1,5 +1,6 @@
 from .abstract_reference import *
 from .range_model import range_model
+from ..dto.proportion_dto import proportion_dto
 
 class proportion():
     """
@@ -55,3 +56,10 @@ class proportion():
             self.__proportion_value=value
         else:
             raise argument_exception("proportion_value should be float type")
+    
+    @staticmethod
+    def to_dto(model:"proportion"):
+        item=proportion_dto()
+        item.range_id=model.range.uuid
+        item.proportion_value=model.proportion_value
+        return item

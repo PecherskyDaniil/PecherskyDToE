@@ -1,3 +1,6 @@
+import json
+import os
+
 from .reposity import *
 from .models.abstract_reference import *
 from .models.unit_model import unit_model
@@ -6,22 +9,24 @@ from .models.range_model import range_model
 from .models.receipt_model import receipt_model
 from .models.proportion import proportion
 from .models.step import step
+from .dto.abstract_dto import abstract_dto
 class start_service:
     """
     Class that creates all default data and start work of all service
     reposity:reposity - where the data contains
+    __cache:dict - where ids contains
     """
     __reposity: reposity = reposity()
     __instance = None
-
+    __cache={}
     def __init__(self):
         """
         Constructor of class
         """
-        self.__reposity.data[reposity.unit_key] = {}
-        self.__reposity.data[reposity.range_key] = {}
-        self.__reposity.data[reposity.range_group_key] = {}
-        self.__reposity.data[reposity.receipt_key] = {}
+        self.__reposity.data[reposity.unit_key()] = {}
+        self.__reposity.data[reposity.range_key()] = {}
+        self.__reposity.data[reposity.range_group_key()] = {}
+        self.__reposity.data[reposity.receipt_key()] = {}
 
     """
     Реализация Singleton
@@ -93,7 +98,7 @@ class start_service:
         Creates default unit killogramm
         """
         inner_gramm=self.create_gramm()
-        item=self.__create_default_value(reposity.unit_key,unit_model.create("килограмм",inner_gramm,1000.0))
+        item=self.__create_default_value(reposity.unit_key(),unit_model.create("килограмм",inner_gramm,1000.0))
         return item
     
     #@staticmethod
@@ -101,7 +106,7 @@ class start_service:
         """
         Creates default unit gramm
         """
-        item=self.__create_default_value(reposity.unit_key,unit_model.create("грамм",None,1.0))
+        item=self.__create_default_value(reposity.unit_key(),unit_model.create("грамм",None,1.0))
         return item
     
     #@staticmethod
@@ -109,7 +114,7 @@ class start_service:
         """
         Creates default unit litr
         """
-        item=self.__create_default_value(reposity.unit_key,unit_model.create("литр",None,1.0))
+        item=self.__create_default_value(reposity.unit_key(),unit_model.create("литр",None,1.0))
         return item
 
     #@staticmethod
@@ -117,7 +122,7 @@ class start_service:
         """
         Creates default unit millilitr
         """
-        item=self.__create_default_value(reposity.unit_key,unit_model.create("миллилитр",self.create_litr(),0.001))
+        item=self.__create_default_value(reposity.unit_key(),unit_model.create("миллилитр",self.create_litr(),0.001))
         return item
     
     #@staticmethod
@@ -125,7 +130,7 @@ class start_service:
         """
         Creates default unit item
         """
-        item=self.__create_default_value(reposity.unit_key,unit_model.create("штука",None,1.0))
+        item=self.__create_default_value(reposity.unit_key(),unit_model.create("штука",None,1.0))
         return item
 
 
@@ -134,21 +139,21 @@ class start_service:
         """
         Function that creates deafult value ingridients
         """
-        return self.__create_default_value(reposity.range_group_key,range_group_model.create("ингридиенты"))
+        return self.__create_default_value(reposity.range_group_key(),range_group_model.create("ингридиенты"))
 
     #@staticmethod
     def create_milk(self):
         """
         Creates default range milk
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("молоко","Молоко пастеризованное натуральное",self.create_litr(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("молоко","Молоко пастеризованное натуральное",self.create_litr(),self.create_ingredients()))
 
     #@staticmethod
     def create_salt(self):
         """
         Creates default range salt
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("соль","Соль пищевая кристализованная",self.create_killogramm(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("соль","Соль пищевая кристализованная",self.create_killogramm(),self.create_ingredients()))
 
 
     #@staticmethod
@@ -156,7 +161,7 @@ class start_service:
         """
         Creates default range sugar
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("сахар","Сахар песок",self.create_killogramm(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("сахар","Сахар песок",self.create_killogramm(),self.create_ingredients()))
 
 
     #@staticmethod
@@ -164,14 +169,14 @@ class start_service:
         """
         Creates default range flour
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("мука","Мука пшеничная 1 сорт",self.create_killogramm(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("мука","Мука пшеничная 1 сорт",self.create_killogramm(),self.create_ingredients()))
     
     #@staticmethod
     def create_egg(self):
         """
         Creates default range egg
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("яйцо","Яйцо куринное",self.create_item(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("яйцо","Яйцо куринное",self.create_item(),self.create_ingredients()))
 
     
     #@staticmethod
@@ -179,7 +184,7 @@ class start_service:
         """
         Creates default range butter
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("масло сливочное","Масло сливочное натуральное",self.create_gramm(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("масло сливочное","Масло сливочное натуральное",self.create_gramm(),self.create_ingredients()))
 
     
     #@staticmethod
@@ -187,7 +192,7 @@ class start_service:
         """
         Creates default range vanilin
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("ванилин","Ванилин пищевой ароматизатор",self.create_gramm(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("ванилин","Ванилин пищевой ароматизатор",self.create_gramm(),self.create_ingredients()))
 
 
 
@@ -196,14 +201,14 @@ class start_service:
         """
         Creates default range water
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("вода","Вода питьевая негазированная",self.create_millilitr(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("вода","Вода питьевая негазированная",self.create_millilitr(),self.create_ingredients()))
 
     #@staticmethod
     def create_oil(self):
         """
         Creates default range oil
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("масло растительное","Масло растительное подсолнечное",self.create_millilitr(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("масло растительное","Масло растительное подсолнечное",self.create_millilitr(),self.create_ingredients()))
 
 
     #@staticmethod
@@ -211,7 +216,7 @@ class start_service:
         """
         Creates default range yests
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("дрожжи","Дрожжи сухие",self.create_gramm(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("дрожжи","Дрожжи сухие",self.create_gramm(),self.create_ingredients()))
 
 
     #@staticmethod
@@ -219,7 +224,7 @@ class start_service:
         """
         Creates default range mozarella cheese
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("моцарелла сыр","Сыр моцарелла",self.create_gramm(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("моцарелла сыр","Сыр моцарелла",self.create_gramm(),self.create_ingredients()))
 
     
     #@staticmethod
@@ -227,7 +232,7 @@ class start_service:
         """
         Creates default range adugey cheese
         """
-        return self.__create_default_value(reposity.range_key,range_model.create("адыгейский сыр","Адыгейский сыр",self.create_gramm(),self.create_ingredients()))
+        return self.__create_default_value(reposity.range_key(),range_model.create("адыгейский сыр","Адыгейский сыр",self.create_gramm(),self.create_ingredients()))
 
 
 
@@ -254,7 +259,7 @@ class start_service:
                           " Можно класть немного меньше теста, тогда вафли будут меньше и их получится больше."))
         steps.append(step("Пеките вафли несколько минут до золотистого цвета. Осторожно откройте вафельницу, она очень горячая! Снимите вафлю лопаткой. Горячая она очень мягкая, как блинчик."))
         
-        item=self.__create_default_value(reposity.receipt_key,receipt_model.create("Вафли Хрустящие",proportions,steps,20.0))
+        item=self.__create_default_value(reposity.receipt_key(),receipt_model.create("Вафли Хрустящие",proportions,steps,20.0))
         return item
 
     #@staticmethod
@@ -290,17 +295,114 @@ class start_service:
         steps.append(step("Разогреть духовку до 220°C, выпекать до золотистой корочки"))
         steps.append(step("Достать хачапури за 5 минут до готовности, сделать углубление в начинке и влить яйцо"))
         steps.append(step("Вернуть в духовку на несколько минут до схватывания белка"))
-        item=self.__create_default_value(reposity.receipt_key,receipt_model.create("Хачапури по Адыгейски",proportions,steps,60.0))
+        item=self.__create_default_value(reposity.receipt_key(),receipt_model.create("Хачапури по Адыгейски",proportions,steps,60.0))
         return item
 
+    def save_defaults_to_config(self,filename):
+        """
+        Function that saves all default values to config
+        """
+        data=json.dumps(self.reposity.to_json())
+        try:
+            with open(filename,"w",encoding="UTF-8") as config:
+                config.write(data)
+                return True
+        except Exception as e:
+            return False
+    
+    def load(self,filename:str):
+        """
+        Function that load data from file
+        """
+        if filename == "":
+            raise operation_exception("Не найден файл настроек!")
+        try:
+            with open(filename, 'r',encoding="UTF-8") as file_instance:
+                data = json.load(file_instance)
+                return self.convert(data)
 
-    def start(self):
+            return False
+        except Exception as e:
+            return False
+    
+    def __save_item(self, key:str, dto:abstract_dto, item:abstract_reference):
+        model_validator.validate(key, str)
+        item.uuid = dto.id
+        self.__cache.setdefault(dto.id, item)
+        self.reposity.data[key][item.name]=item
+
+    def __convert_units(self, data: dict) -> bool:
+        model_validator.validate(data, dict)
+        units = data['units'] if 'units' in data else []    
+        if len(units) == 0:
+            return False
+         
+        for unit in units:
+            dto = unit_dto().create(unit)
+            item = unit_model.from_dto(dto, self.__cache)
+            self.__save_item( reposity.unit_key(), dto, item )
+
+        return True
+
+    # Загрузить группы номенклатуры
+    def __convert_groups(self, data: dict) -> bool:
+        model_validator.validate(data, dict)
+        range_groups =  data['range_groups'] if 'range_groups' in data else []    
+        if len(range_groups) == 0:
+            return False
+
+        for range_group in range_groups:
+            dto = range_group_dto().create(range_group)    
+            item = range_group_model.from_dto(dto, self.__cache)
+            self.__save_item(reposity.range_group_key(), dto, item)
+
+        return True
+
+    # Загрузить номенклатуру
+    def __convert_ranges(   self, data: dict) -> bool:
+        model_validator.validate(data, dict)      
+        ranges = data['ranges'] if 'ranges' in data else []   
+        if len(ranges) == 0:
+            return False
+         
+        for range in ranges:
+            dto = range_dto().create(range)
+            item = range_model.from_dto(dto, self.__cache)
+            self.__save_item( reposity.range_key(), dto, item )
+
+        return True        
+    def __convert_receipt(self,data:dict)->bool:
+        model_validator.validate(data, dict)
+        receipts=data["receipts"] if "receipts" in data else []   
+        if len(receipts)==0:
+            return False
+        for receipt in receipts:
+            dto=receipt_dto().create(receipt)
+            item=receipt_model.from_dto(dto,self.__cache)
+            self.__save_item(reposity.receipt_key(),dto,item)
+        return True 
+    
+    def convert(self, data: dict) -> bool:
+        """
+        Function that convert data from config
+        """
+        model_validator.validate(data, dict)
+        self.__convert_units(data)    
+        self.__convert_groups(data)  
+        self.__convert_ranges(data)
+        self.__convert_receipt(data)
+        return True
+
+    def start(self,create_default:bool=True):
         """
         Function that start service and create default data
         """
-        self.default_create_unit()
-        self.default_create_range()
-        self.default_create_range_group()
-        self.default_create_receipt()
+        #if os.path.exists("default_data.json"):
+        #    self.load("default_data.json")
+        if create_default:
+            self.default_create_unit()
+            self.default_create_range()
+            self.default_create_range_group()
+            self.default_create_receipt()
     
 

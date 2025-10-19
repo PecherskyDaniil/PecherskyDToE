@@ -20,38 +20,38 @@ class TestStart:
         Test valid start service
         """
         # проверка
-        assert len(start_service_instance.reposity.data[reposity.unit_key].keys()) != 0
-        assert len(start_service_instance.reposity.data[reposity.range_group_key].keys())!=0
-        assert len(start_service_instance.reposity.data[reposity.range_key].keys())!=0
-        assert len(start_service_instance.reposity.data[reposity.receipt_key].keys())!=0
+        assert len(start_service_instance.reposity.data[reposity.unit_key()].keys()) != 0
+        assert len(start_service_instance.reposity.data[reposity.range_group_key()].keys())!=0
+        assert len(start_service_instance.reposity.data[reposity.range_key()].keys())!=0
+        assert len(start_service_instance.reposity.data[reposity.receipt_key()].keys())!=0
 
     def test_valid_start_service_units(self,start_service_instance:start_service):
         """
         Test valid default created units
         """
         #Проверка всех значений
-        assert all(key in start_service_instance.reposity.data[reposity.unit_key].keys() for key in ["килограмм","грамм","литр","миллилитр","штука"])
+        assert all(key in start_service_instance.reposity.data[reposity.unit_key()].keys() for key in ["килограмм","грамм","литр","миллилитр","штука"])
 
     def test_valid_start_service_ranges(self,start_service_instance:start_service):
         """
         Test valid default created ranges
         """
         #Проверка всех значений
-        assert all(key in start_service_instance.reposity.data[reposity.range_key].keys() for key in ['яйцо', 'мука', 'молоко', 'соль', 'сахар', 'адыгейский сыр', 'моцарелла сыр', 'ванилин', 'масло растительное', 'масло сливочное', 'дрожжи', 'вода'])
+        assert all(key in start_service_instance.reposity.data[reposity.range_key()].keys() for key in ['яйцо', 'мука', 'молоко', 'соль', 'сахар', 'адыгейский сыр', 'моцарелла сыр', 'ванилин', 'масло растительное', 'масло сливочное', 'дрожжи', 'вода'])
     
     def test_valid_start_service_range_groups(self,start_service_instance:start_service):
         """
         Test valid default created range groups
         """
         #Проверка всех значений
-        assert all(key in start_service_instance.reposity.data[reposity.range_group_key].keys() for key in ["ингридиенты"])
+        assert all(key in start_service_instance.reposity.data[reposity.range_group_key()].keys() for key in ["ингридиенты"])
     
     def test_valid_start_service_receipts(self,start_service_instance:start_service):
         """
         Test valid default created receipts
         """
         #Проверка всех значений
-        assert all(key in start_service_instance.reposity.data[reposity.receipt_key].keys() for key in ["Вафли Хрустящие","Хачапури по Адыгейски"])
+        assert all(key in start_service_instance.reposity.data[reposity.receipt_key()].keys() for key in ["Вафли Хрустящие","Хачапури по Адыгейски"])
 
     def test_valid_create_kilogram(self, start_service_instance):
         """Test kilogram unit creation"""
@@ -263,10 +263,10 @@ class TestStart:
         start_service_instance.start()
         
         # Verify that all data types are populated
-        assert len(start_service_instance.reposity.data[reposity.unit_key]) > 0
-        assert len(start_service_instance.reposity.data[reposity.range_group_key]) > 0
-        assert len(start_service_instance.reposity.data[reposity.range_key]) > 0
-        assert len(start_service_instance.reposity.data[reposity.receipt_key]) > 0
+        assert len(start_service_instance.reposity.data[reposity.unit_key()]) > 0
+        assert len(start_service_instance.reposity.data[reposity.range_group_key()]) > 0
+        assert len(start_service_instance.reposity.data[reposity.range_key()]) > 0
+        assert len(start_service_instance.reposity.data[reposity.receipt_key()]) > 0
 
     def test_valid_duplicate_creation(self, start_service_instance):
         """Test that duplicate creation returns existing objects"""
@@ -291,9 +291,9 @@ class TestStart:
         mililiter = start_service_instance.create_millilitr()
         litr = start_service_instance.create_litr()
         #Проверка
-        assert kilogram.base_unit is gram
+        assert kilogram.base_unit == gram
 
-        assert mililiter.base_unit is litr
+        assert mililiter.base_unit == litr
     
     def test_reposity_data_persistence(self, start_service_instance):
         """Test that data persists in repository across method calls"""
@@ -303,6 +303,45 @@ class TestStart:
         start_service_instance.create_egg()
         
         # Verify data is stored in repository
-        assert 'грамм' in start_service_instance.reposity.data[reposity.unit_key].keys()
-        assert 'ингридиенты' in start_service_instance.reposity.data[reposity.range_group_key].keys()
-        assert 'яйцо' in start_service_instance.reposity.data[reposity.range_key].keys()
+        assert 'грамм' in start_service_instance.reposity.data[reposity.unit_key()].keys()
+        assert 'ингридиенты' in start_service_instance.reposity.data[reposity.range_group_key()].keys()
+        assert 'яйцо' in start_service_instance.reposity.data[reposity.range_key()].keys()
+
+    def test_valid_save_defaults_to_config(self, start_service_instance:start_service):
+        """
+        Test of start_service to save dafaults to config 
+        """
+        filepath="./tests/test_dir/test_default_config.json"
+        if os.path.exists(filepath):
+            os.remove(filepath)
+        assert start_service_instance.save_defaults_to_config(filepath)==True
+        with open(filepath,"r",encoding="UTF-8") as json_file:
+            json_obj=json.load(json_file)
+        assert len(json_obj["receipts"])==2
+        assert len(json_obj["units"])==5
+        assert len(json_obj["ranges"])==12
+        assert len(json_obj["range_groups"])==1
+    
+    def test_valid_load_config_to_start_service(self):
+        """
+        Test of start_service to load from dafaults to config 
+        """
+        filepath="./tests/test_default_config.json"
+        s_s=start_service()
+        s_s.start(False)
+        assert s_s.load(filepath)==True
+        assert len(s_s.reposity.data[reposity.receipt_key()])==2
+        assert len(s_s.reposity.data[reposity.unit_key()])==5
+        assert len(s_s.reposity.data[reposity.range_key()])==12
+        assert len(s_s.reposity.data[reposity.range_group_key()])==1
+    
+    def test_error_load_config_to_start_service(self):
+        """
+        Test of error start_service to load from defaults to config from wrong path
+        """
+        filepath="./wrong_path.json"
+        s_s=start_service()
+        s_s.start(False)
+        assert s_s.load(filepath)==False
+        with pytest.raises(operation_exception):
+            s_s.load("")
