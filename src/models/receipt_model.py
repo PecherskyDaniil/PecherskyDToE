@@ -116,6 +116,7 @@ class receipt_model(abstract_reference):
             range_obj=cache[receipt_item["range_id"]] if receipt_item["range_id"] in cache else None
             ingridients.append(proportion(range_obj,receipt_item["proportion_value"]))
         item = receipt_model.create(dto.name,ingridients,steps,dto.time)
+        item.uuid=dto.uuid
         return item
 
     def to_dto(model:"receipt_model"):
@@ -124,14 +125,14 @@ class receipt_model(abstract_reference):
         """
         item=receipt_dto()
         item.name=model.name
-        item.id=model.uuid
+        item.uuid=model.uuid
         ingridients=[]
-        for proportion in model.ingridients:
-            ingridients.append(proportion.to_dto(proportion))
+        for proportion_obj in model.ingridients:
+            ingridients.append(proportion_obj.to_dto())
         item.ingridients=ingridients
         steps=[]
-        for step in model.steps:
-            steps.append(step.to_dto(step))
+        for step_obj in model.steps:
+            steps.append(step_obj.to_dto())
         item.steps=steps
         item.time=model.time
         return item

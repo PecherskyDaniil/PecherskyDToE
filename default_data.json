@@ -1,7 +1,7 @@
 {
     "receipts": [
         {
-            "id": "4e0032ea-56fa-47c8-9815-eae3839b658a",
+            "uuid": "4e0032ea-56fa-47c8-9815-eae3839b658a",
             "ingridients": [
                 {
                     "proportion_value": 100.0,
@@ -54,7 +54,7 @@
             "time": 0.0
         },
         {
-            "id": "0300091c-8a1d-41cf-9212-7ea0754fbe3f",
+            "uuid": "0300091c-8a1d-41cf-9212-7ea0754fbe3f",
             "ingridients": [
                 {
                     "proportion_value": 400.0,
@@ -155,84 +155,84 @@
         {
             "full_name": "Яйцо куринное",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "a5586ebc-b552-4511-b65a-693d3b825ab3",
+            "uuid": "a5586ebc-b552-4511-b65a-693d3b825ab3",
             "name": "яйцо",
             "unit_id": "45a2acc8-c72d-4f2b-a08b-0a1e7e1f9fb2"
         },
         {
             "full_name": "Мука пшеничная 1 сорт",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "22417545-dba3-4170-bbe9-e0d35a0a86c3",
+            "uuid": "22417545-dba3-4170-bbe9-e0d35a0a86c3",
             "name": "мука",
             "unit_id": "1ab9e3f8-be13-4c6a-9a8d-41e2d6521eee"
         },
         {
             "full_name": "Молоко пастеризованное натуральное",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "18c0fa39-50b0-4e17-80e3-84b14c96a99d",
+            "uuid": "18c0fa39-50b0-4e17-80e3-84b14c96a99d",
             "name": "молоко",
             "unit_id": "b842120d-4f89-41ca-8831-2c34b267026a"
         },
         {
             "full_name": "Соль пищевая кристализованная",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "15a828a0-bd09-477f-a1af-f4ac6a7ae6c4",
+            "uuid": "15a828a0-bd09-477f-a1af-f4ac6a7ae6c4",
             "name": "соль",
             "unit_id": "1ab9e3f8-be13-4c6a-9a8d-41e2d6521eee"
         },
         {
             "full_name": "Сахар песок",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "d2e47c89-7f0e-464e-b176-17f7087cfefd",
+            "uuid": "d2e47c89-7f0e-464e-b176-17f7087cfefd",
             "name": "сахар",
             "unit_id": "1ab9e3f8-be13-4c6a-9a8d-41e2d6521eee"
         },
         {
             "full_name": "Адыгейский сыр",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "a3531c8b-f1be-4665-b7b3-1d7db215390a",
+            "uuid": "a3531c8b-f1be-4665-b7b3-1d7db215390a",
             "name": "адыгейский сыр",
             "unit_id": "553f2993-30bb-4e1d-b16e-16e0a2d4cbfc"
         },
         {
             "full_name": "Сыр моцарелла",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "3cf20a3a-05a2-473e-8142-be6f446a5368",
+            "uuid": "3cf20a3a-05a2-473e-8142-be6f446a5368",
             "name": "моцарелла сыр",
             "unit_id": "553f2993-30bb-4e1d-b16e-16e0a2d4cbfc"
         },
         {
             "full_name": "Ванилин пищевой ароматизатор",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "05d10027-7fb6-4426-ad96-9d01ffdcb629",
+            "uuid": "05d10027-7fb6-4426-ad96-9d01ffdcb629",
             "name": "ванилин",
             "unit_id": "553f2993-30bb-4e1d-b16e-16e0a2d4cbfc"
         },
         {
             "full_name": "Масло растительное подсолнечное",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "ffb1afd5-e2b0-4f08-9de4-7d71784eb45b",
+            "uuid": "ffb1afd5-e2b0-4f08-9de4-7d71784eb45b",
             "name": "масло растительное",
             "unit_id": "a6a332fc-54d6-40be-aaff-9cc7c60f0277"
         },
         {
             "full_name": "Масло сливочное натуральное",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "76fb919b-58a4-4577-bee8-faa7cc4e7a7a",
+            "uuid": "76fb919b-58a4-4577-bee8-faa7cc4e7a7a",
             "name": "масло сливочное",
             "unit_id": "553f2993-30bb-4e1d-b16e-16e0a2d4cbfc"
         },
         {
             "full_name": "Дрожжи сухие",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "fb4ff8cf-1f9f-43d8-92de-4e190b02aaf3",
+            "uuid": "fb4ff8cf-1f9f-43d8-92de-4e190b02aaf3",
             "name": "дрожжи",
             "unit_id": "553f2993-30bb-4e1d-b16e-16e0a2d4cbfc"
         },
         {
             "full_name": "Вода питьевая негазированная",
             "group_id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
-            "id": "355e9d37-133c-4b8a-b43d-d7c9f6e0f651",
+            "uuid": "355e9d37-133c-4b8a-b43d-d7c9f6e0f651",
             "name": "вода",
             "unit_id": "a6a332fc-54d6-40be-aaff-9cc7c60f0277"
         }
@@ -241,37 +241,37 @@
         {
             "base_id": null,
             "coef": 1.0,
-            "id": "553f2993-30bb-4e1d-b16e-16e0a2d4cbfc",
+            "uuid": "553f2993-30bb-4e1d-b16e-16e0a2d4cbfc",
             "name": "грамм"
         },
         {
             "base_id": "553f2993-30bb-4e1d-b16e-16e0a2d4cbfc",
             "coef": 1000.0,
-            "id": "1ab9e3f8-be13-4c6a-9a8d-41e2d6521eee",
+            "uuid": "1ab9e3f8-be13-4c6a-9a8d-41e2d6521eee",
             "name": "килограмм"
         },
         {
             "base_id": null,
             "coef": 1.0,
-            "id": "b842120d-4f89-41ca-8831-2c34b267026a",
+            "uuid": "b842120d-4f89-41ca-8831-2c34b267026a",
             "name": "литр"
         },
         {
             "base_id": "b842120d-4f89-41ca-8831-2c34b267026a",
             "coef": 0.001,
-            "id": "a6a332fc-54d6-40be-aaff-9cc7c60f0277",
+            "uuid": "a6a332fc-54d6-40be-aaff-9cc7c60f0277",
             "name": "миллилитр"
         },
         {
             "base_id": null,
             "coef": 1.0,
-            "id": "45a2acc8-c72d-4f2b-a08b-0a1e7e1f9fb2",
+            "uuid": "45a2acc8-c72d-4f2b-a08b-0a1e7e1f9fb2",
             "name": "штука"
         }
     ],
     "range_groups": [
         {
-            "id": "63ec0329-33b0-462d-8d1f-f86de96930b3",
+            "uuid": "63ec0329-33b0-462d-8d1f-f86de96930b3",
             "name": "ингридиенты"
         }
     ]

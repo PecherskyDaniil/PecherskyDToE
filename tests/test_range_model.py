@@ -103,6 +103,7 @@ class TestRangeModel:
         range_dto_obj.group_id="234"
         range_dto_obj.unit_id="123"
         range_dto_obj.full_name="Mega Cheese"
+        range_dto_obj.uuid="112233"
         #Присваивание
         range_obj=range_model.from_dto(range_dto_obj,cache)
         #Проверка

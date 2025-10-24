@@ -34,3 +34,4 @@ class proportion_dto(abstract_dto):
         """
         self.__proportion_value = value
 
+

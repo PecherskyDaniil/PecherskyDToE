@@ -57,9 +57,8 @@ class proportion():
         else:
             raise argument_exception("proportion_value should be float type")
     
-    @staticmethod
-    def to_dto(model:"proportion"):
+    def to_dto(self):
         item=proportion_dto()
-        item.range_id=model.range.uuid
-        item.proportion_value=model.proportion_value
+        item.range_id=self.range.uuid
+        item.proportion_value=self.proportion_value
         return item

@@ -20,3 +20,4 @@ class step_dto(abstract_dto):
         Setter fo property step description
         """
         self.__step_description = value
+

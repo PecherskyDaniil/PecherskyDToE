@@ -20,7 +20,7 @@ class response_markdown(abstract_response):
         Function that convert data to markdown format
         """
         text = super().create(data)
-        dict_obj=self.build_object_dict(data)
+        dict_obj=self.build_object_dict(data)["data"]
         item = dict_obj[0]
         fields = item.keys()
         # Шапка

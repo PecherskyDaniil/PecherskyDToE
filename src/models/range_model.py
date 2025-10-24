@@ -107,6 +107,7 @@ class range_model(abstract_reference):
         unit =  cache[ dto.unit_id ] if dto.unit_id in cache else None
         group= cache[ dto.group_id ] if dto.group_id in cache else None
         item  = range_model.create(dto.name,dto.full_name,unit,group)
+        item.uuid=dto.uuid
         return item
 
     def to_dto(model:"range_model"):
@@ -115,7 +116,7 @@ class range_model(abstract_reference):
         """
         item=range_dto()
         item.name=model.name
-        item.id=model.uuid
+        item.uuid=model.uuid
         item.unit_id=model.unit.uuid
         item.group_id=model.group.uuid
         item.full_name=model.full_name

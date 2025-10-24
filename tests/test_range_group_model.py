@@ -46,6 +46,7 @@ class TestRangeGroupModel:
         #Создание
         range_group_dto_obj=range_group_dto()
         range_group_dto_obj.name="Name"
+        range_group_dto_obj.uuid="112233"
         #Присваивание
         range_group_obj=range_group_model.from_dto(range_group_dto_obj,{})
         #Проверка
