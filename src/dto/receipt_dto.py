@@ -51,4 +51,3 @@ class receipt_dto(abstract_dto):
         """
         self.__time = value
     
-    

@@ -40,8 +40,7 @@ class step():
         """
         return str(self.step_description)
 
-    @staticmethod
-    def to_dto(model:"step"):
+    def to_dto(self):
         item=step_dto()
-        item.step_description=model.step_description
+        item.step_description=self.step_description
         return item

@@ -7,7 +7,7 @@ class abstract_dto:
     Abstract class for dtos
     """
     __name:str = ""
-    __id:str = ""
+    __uuid:str = ""
 
     @property
     def name(self) ->str:
@@ -24,18 +24,18 @@ class abstract_dto:
         self.__name = value
 
     @property
-    def id(self) -> str:
+    def uuid(self) -> str:
         """
         Property id
         """
-        return self.__id
+        return self.__uuid
 
-    @id.setter
-    def id(self, value):
+    @uuid.setter
+    def uuid(self, value):
         """
         Setter for property id
         """
-        self.__id = value   
+        self.__uuid = value   
 
     @abc.abstractmethod
     def create(self, data) -> "abstract_dto":
@@ -55,22 +55,3 @@ class abstract_dto:
 
         return self
     
-    @abc.abstractmethod
-    def to_dict(self) -> dict:
-        """
-        Function for convert dto to dictionary
-        """
-        fields = common.get_fields(self)
-        data={}
-        for key in fields:
-            attr=getattr(self, key) 
-            if isinstance(attr,abstract_dto):
-                data[key]=attr.to_dict()
-            elif isinstance(attr,list) and len(attr)>0 and isinstance(attr[0],abstract_dto):
-                sub_data=[]
-                for obj in attr:
-                    sub_data.append(obj.to_dict())
-                data[key]=sub_data
-            else:
-                data[key]=attr
-        return data

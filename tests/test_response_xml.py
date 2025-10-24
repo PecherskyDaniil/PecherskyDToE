@@ -30,9 +30,10 @@ class TestResponceXML:
         xml_formatter=response_xml()
         xml_result=xml_formatter.create(simple_valid_data)
         xml_obj = ET.fromstring(xml_result)
-        assert len(xml_obj.findall("obj"))==2
-        assert len(xml_obj.findall("obj")[0].findall("id"))==1
-        assert len(xml_obj.findall("obj")[1].findall("*"))==5
+        #assert xml_result==None
+        assert len(xml_obj.findall("data_obj"))==2
+        assert len(xml_obj.findall("data_obj")[0].findall("uuid"))==1
+        assert len(xml_obj.findall("data_obj")[1].findall("*"))==5
 
     def test_valid_create_file_responce_xml(self,valid_data_of_factory):
         """

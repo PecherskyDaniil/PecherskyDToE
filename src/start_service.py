@@ -323,12 +323,13 @@ class start_service:
 
             return False
         except Exception as e:
+            #raise e
             return False
     
     def __save_item(self, key:str, dto:abstract_dto, item:abstract_reference):
         model_validator.validate(key, str)
-        item.uuid = dto.id
-        self.__cache.setdefault(dto.id, item)
+        item.uuid = dto.uuid
+        self.__cache.setdefault(dto.uuid, item)
         self.reposity.data[key][item.name]=item
 
     def __convert_units(self, data: dict) -> bool:

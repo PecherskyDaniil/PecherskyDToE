@@ -49,4 +49,4 @@ class range_dto(abstract_dto):
         Setter for property group id
         """
         self.__group_id = value
-    
+

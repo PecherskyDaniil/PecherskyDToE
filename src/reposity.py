@@ -9,6 +9,8 @@ from .models.range_model import range_model
 from .models.receipt_model import receipt_model
 from .models.proportion import proportion
 from .models.step import step
+
+from .converters.convert_factory import convert_factory
 class reposity:
     """
     Class that contains data of all system
@@ -82,7 +84,7 @@ class reposity:
         data=[]
         for obj_name in self.data[key]:
             dto_obj=self.data[key][obj_name].to_dto()
-            data.append(dto_obj.to_dict())
+            data.append(convert_factory().convert(dto_obj))
         return data
     def to_json(self):
         """
