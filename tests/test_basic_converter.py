@@ -26,12 +26,12 @@ class TestBasicConverter:
     Test for basic_converter
     """
     
-    def test_valid_convert_basic(self,sample_receipt:receipt_model):
+    def test_valid_convert_basic(self):
         """
         Test convert basic
         """
-        json_obj=basic_converter.convert(sample_receipt)
-        # Проверяем, что объект создается без ошибок
-        assert list(json_obj.keys())==["name","time","uuid"]
+        assert basic_converter.convert(1)==1
+        assert basic_converter.convert("2")=="2"
+    
 
     

@@ -23,6 +23,7 @@ class response_json(abstract_response):
         """
         text = super().create(data)
         dict_obj=self.build_object_dict(data)
-        result=dict_obj
+        result={}
+        result["data"]=dict_obj
         text+=json.dumps(result)
         return text 

@@ -48,7 +48,7 @@ def get_model_data(model:str,format:str):
             content_type=result_format.response_type(),
             )
     except Exception as e:
-        #raise e
+        raise e
         if str(e)=="Формат не верный":
             return Response(
                 status=404,
@@ -82,6 +82,7 @@ def get_model_default_data(model:str):
             content_type=result_format.response_type(),
             )
     except Exception as e:
+        raise e
         if str(e)=="Формат не верный":
             return Response(
                 status=404,

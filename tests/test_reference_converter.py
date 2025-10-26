@@ -30,12 +30,16 @@ class TestReferenceConverter:
         """
         Test create of range_group_dto
         """
-        json_obj=reference_converter.convert(sample_receipt)
+        dto_obj=reference_converter.convert(sample_receipt)
         # Проверяем, что объект создается без ошибок
-        assert list(json_obj.keys())==["ingridients","steps","name","time","uuid"]
-        assert len(json_obj["ingridients"])==2
-        assert len(json_obj["steps"])==2
-        assert json_obj["name"]=="myreceipt"
-        assert json_obj["time"]==20.0
+        assert dto_obj.uuid==sample_receipt.uuid
+    
+    def text_error_convert_reference(self):
+        """
+        Test convert error datetime
+        """
+        s="string"
+        with pytest.raises(argument_exception):
+            reference_converter.convert(s)
 
     

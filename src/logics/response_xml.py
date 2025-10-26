@@ -21,7 +21,9 @@ class response_xml(abstract_response):
         """
         text = super().create(data)
         dict_obj=self.build_object_dict(data)
+        text="<data>"
         text+=self.__build_xml_from_dict(dict_obj,"obj")
+        text+="</data>"
         return text
     
     def __build_xml_from_dict(self,obj:dict,tag:str):

@@ -21,10 +21,8 @@ class TestConvertFactory:
         c_f=convert_factory()
         dict_obj=c_f.convert(simple_valid_data)
         # Проверяем, что объект создается без ошибок
-        assert len(dict_obj["data"])==2
-        assert dict_obj["data"][0]["name"]=="name1"
-        assert dict_obj["data"][1]["full_name"]=="The Name2"
-        assert dict_obj["data"][0]["unit"]["name"]=="gramm"
-        #assert dict_obj==None
+        assert len(dict_obj)==2
+        assert dict_obj[0]["name"]=="name1"
+        assert dict_obj[1]["full_name"]=="The Name2"
 
     

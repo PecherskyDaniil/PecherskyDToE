@@ -23,7 +23,7 @@ class abstract_response(ABC):
         model_validator.validate(data,list)
         model_validator.validate(data[0],abstract_reference)
         c_f=convert_factory()
-        dict_obj=c_f.convert(list(map(lambda x:x.to_dto(),data)))
+        dict_obj=c_f.convert(data)
         return dict_obj
 
     

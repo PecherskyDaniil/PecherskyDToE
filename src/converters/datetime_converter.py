@@ -1,5 +1,5 @@
 from .abstract_converter import abstract_converter
-from ..core.common import common
+from ..models.abstract_reference import argument_exception
 import datetime
 class datetime_converter(abstract_converter):
     """
@@ -11,15 +11,5 @@ class datetime_converter(abstract_converter):
         Function to converting datetime data to dict
         """
         if isinstance(obj,datetime.datetime):
-            return obj
-        dict_obj={}
-        fields=common.get_fields(obj)
-
-        for field in fields:
-            value=getattr(obj,field)
-            if isinstance(value,datetime.datetime):
-                dict_obj[field]=value.strftime("%Y-%m-%d %H:%M:%S")
-            elif isinstance(value,list) and len(value)>0:
-                if isinstance(value,datetime.datetime):
-                    dict_obj[field]=list(map(lambda x:x.strftime("%Y-%m-%d %H:%M:%S"),value))
-        return dict_obj
+            return obj.strftime("%Y-%m-%d %H:%M:%S")
+        raise argument_exception("Gets only datetime")

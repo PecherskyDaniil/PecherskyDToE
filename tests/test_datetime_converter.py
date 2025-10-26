@@ -1,6 +1,6 @@
 import pytest
 import datetime
-
+from src.models.abstract_reference import argument_exception
 from src.converters.datetime_converter import datetime_converter
 class SampleObject:
     """
@@ -35,10 +35,13 @@ class TestDatetimeConverter:
         """
         Test convert datetime
         """
-        obj=SampleObject()
-        json_obj=datetime_converter.convert(obj)
-        # Проверяем, что объект создается без ошибок
-        assert "datetime_of_creation" in json_obj.keys()
-        assert "name" not in json_obj.keys()
+        dt=datetime.datetime.now()
+        assert datetime_converter.convert(dt).split("-")[0]==str(dt.year)
 
-    
+    def text_error_convert_datetime(self):
+        """
+        Test convert error datetime
+        """
+        dt="datetime.datetime.now()"
+        with pytest.raises(argument_exception):
+            datetime_converter.convert(dt)

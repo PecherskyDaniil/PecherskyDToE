@@ -19,7 +19,7 @@ class response_csv(abstract_response):
         Function that convert data to csv format
         """
         text = super().create(data)
-        dict_obj=self.build_object_dict(data)["data"]
+        dict_obj=self.build_object_dict(data)
         item = dict_obj[0]
         fields = item.keys()
         # Шапка

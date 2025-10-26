@@ -81,10 +81,11 @@ class reposity:
         """
         return "receipts"
     def __class_to_json(self,key:str):
+        return convert_factory().convert(self.data[key])
         data=[]
         for obj_name in self.data[key]:
-            dto_obj=self.data[key][obj_name].to_dto()
-            data.append(convert_factory().convert(dto_obj))
+            model_obj=self.data[key][obj_name]
+            data.append(convert_factory().convert(model_obj))
         return data
     def to_json(self):
         """
