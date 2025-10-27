@@ -7,7 +7,36 @@ class receipt_dto(abstract_dto):
     __steps:list[str] = []
     __ingridients:list[dict] = []
     __time:float = 0.0
+    __name:str = ""
+    __uuid:str = ""
 
+    @property
+    def name(self) ->str:
+        """
+        Property name
+        """
+        return self.__name
+    
+    @name.setter
+    def name(self, value):
+        """
+        Setter for property name
+        """
+        self.__name = value
+
+    @property
+    def uuid(self) -> str:
+        """
+        Property id
+        """
+        return self.__uuid
+
+    @uuid.setter
+    def uuid(self, value):
+        """
+        Setter for property id
+        """
+        self.__uuid = value  
 
     @property
     def steps(self) -> list:

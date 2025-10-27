@@ -5,37 +5,7 @@ from ..models.abstract_reference import model_validator,argument_exception, oper
 class abstract_dto:
     """
     Abstract class for dtos
-    """
-    __name:str = ""
-    __uuid:str = ""
-
-    @property
-    def name(self) ->str:
-        """
-        Property name
-        """
-        return self.__name
-    
-    @name.setter
-    def name(self, value):
-        """
-        Setter for property name
-        """
-        self.__name = value
-
-    @property
-    def uuid(self) -> str:
-        """
-        Property id
-        """
-        return self.__uuid
-
-    @uuid.setter
-    def uuid(self, value):
-        """
-        Setter for property id
-        """
-        self.__uuid = value   
+    """ 
 
     @abc.abstractmethod
     def create(self, data) -> "abstract_dto":
