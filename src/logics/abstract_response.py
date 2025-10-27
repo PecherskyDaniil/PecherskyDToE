@@ -1,6 +1,6 @@
 from abc import ABC,abstractmethod
 from ..models.abstract_reference import model_validator,operation_exception,argument_exception,abstract_reference
-
+from ..converters.convert_factory import convert_factory
 class abstract_response(ABC):
     """
     Abstract class for responses
@@ -22,7 +22,8 @@ class abstract_response(ABC):
         """
         model_validator.validate(data,list)
         model_validator.validate(data[0],abstract_reference)
-        dict_obj=list(map(lambda x:x.to_dto().to_dict(),data))
+        c_f=convert_factory()
+        dict_obj=c_f.convert(data)
         return dict_obj
 
     

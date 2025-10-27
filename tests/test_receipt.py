@@ -190,6 +190,7 @@ class TestReceiptModel:
             {"step_description":"oh"}
         ]
         receipt_dto_obj.time=20.0
+        receipt_dto_obj.uuid="112233"
         #Присваивание
         receipt_obj=receipt_model.from_dto(receipt_dto_obj,cache)
         #Проверка

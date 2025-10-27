@@ -24,6 +24,7 @@ class range_group_model(abstract_reference):
         model_validator.validate(dto, range_group_dto)
         model_validator.validate(cache, dict)
         item  = range_group_model.create(dto.name)
+        item.uuid=dto.uuid
         return item
     
     def to_dto(model:"range_group_model"):
@@ -32,6 +33,6 @@ class range_group_model(abstract_reference):
         """
         item=range_group_dto()
         item.name=model.name
-        item.id=model.uuid
+        item.uuid=model.uuid
         return item
    

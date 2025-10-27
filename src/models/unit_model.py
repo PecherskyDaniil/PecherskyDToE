@@ -88,6 +88,7 @@ class unit_model(abstract_reference):
         model_validator.validate(cache, dict)
         base_unit =  cache[ dto.base_id ] if dto.base_id in cache else None
         item  = unit_model.create(dto.name, base_unit, dto.coef)
+        item.uuid=dto.uuid
         return item
     
     def to_dto(model:"unit_model"):
@@ -96,7 +97,7 @@ class unit_model(abstract_reference):
         """
         item=unit_dto()
         item.name=model.name
-        item.id=model.uuid
+        item.uuid=model.uuid
         if model.base_unit is not None:
             item.base_id=model.base_unit.uuid
         else:

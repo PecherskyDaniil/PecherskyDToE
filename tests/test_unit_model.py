@@ -77,6 +77,7 @@ class TestUnitModel:
         unit_dto_obj.name="kilo"
         unit_dto_obj.base_id="123"
         unit_dto_obj.coef=1000.0
+        unit_dto_obj.uuid="112233"
         #Присваивание
         unit_obj=unit_model.from_dto(unit_dto_obj,cache)
         #Проверка

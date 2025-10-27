@@ -7,7 +7,36 @@ class unit_dto(abstract_dto):
     """
     __base_id:str = None
     __coef:int = 1
+    __name:str = ""
+    __uuid:str = ""
 
+    @property
+    def name(self) ->str:
+        """
+        Property name
+        """
+        return self.__name
+    
+    @name.setter
+    def name(self, value):
+        """
+        Setter for property name
+        """
+        self.__name = value
+
+    @property
+    def uuid(self) -> str:
+        """
+        Property id
+        """
+        return self.__uuid
+
+    @uuid.setter
+    def uuid(self, value):
+        """
+        Setter for property id
+        """
+        self.__uuid = value  
     @property
     def base_id(self) -> str:
         """
