@@ -205,6 +205,8 @@ class model_validator():
             return False # return false
     @staticmethod
     def validate(value,type):
+        if value is None:
+            return
         if not(model_validator.check_type(value,type)):
             raise argument_exception(f"value should be {type}")
 class abstract_reference(ABC):
@@ -242,6 +244,7 @@ class abstract_reference(ABC):
         value - str
         """
         if value==None or self._prop_validator.valid_property("name",value): # value should fits limit
+
             self.__name=value # if everything ok sets value
         else: #else
             raise argument_exception("wrong value for name") # else raises exception

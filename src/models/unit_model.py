@@ -68,6 +68,13 @@ class unit_model(abstract_reference):
         """
         return f"1 {self.name} = {self.coef} {self.base_unit if self.base_unit is not None else '' }"
 
+    def get_base(self)->tuple:
+        if self.base_unit is None:
+            return (self.name,self.coef)
+        else:
+            base=self.base_unit.get_base()
+            return (base[0],self.coef*base[1])
+
     @staticmethod
     def create(name:str,base,coef:float):
         """
@@ -91,16 +98,16 @@ class unit_model(abstract_reference):
         item.uuid=dto.uuid
         return item
     
-    def to_dto(model:"unit_model"):
+    def to_dto(self):
         """
         Function that convert instance to dto
         """
         item=unit_dto()
-        item.name=model.name
-        item.uuid=model.uuid
-        if model.base_unit is not None:
-            item.base_id=model.base_unit.uuid
+        item.name=self.name
+        item.uuid=self.uuid
+        if self.base_unit is not None:
+            item.base_id=self.base_unit.uuid
         else:
-            item.base_id=model.base_unit
-        item.coef=model.coef
+            item.base_id=self.base_unit
+        item.coef=self.coef
         return item

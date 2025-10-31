@@ -119,20 +119,20 @@ class receipt_model(abstract_reference):
         item.uuid=dto.uuid
         return item
 
-    def to_dto(model:"receipt_model"):
+    def to_dto(self):
         """
         Function that convert instance to dto
         """
         item=receipt_dto()
-        item.name=model.name
-        item.uuid=model.uuid
+        item.name=self.name
+        item.uuid=self.uuid
         ingridients=[]
-        for proportion_obj in model.ingridients:
+        for proportion_obj in self.ingridients:
             ingridients.append(proportion_obj.to_dto())
         item.ingridients=ingridients
         steps=[]
-        for step_obj in model.steps:
+        for step_obj in self.steps:
             steps.append(step_obj.to_dto())
         item.steps=steps
-        item.time=model.time
+        item.time=self.time
         return item

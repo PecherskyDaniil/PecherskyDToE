@@ -51,4 +51,5 @@ class convert_factory:
                 data[key]=self.convert(attr)
             return data
         except Exception as e:
+            raise e
             raise argument_exception("There is not converter for this type")

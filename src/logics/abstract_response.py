@@ -21,9 +21,13 @@ class abstract_response(ABC):
         Method for build dict from object
         """
         model_validator.validate(data,list)
-        model_validator.validate(data[0],abstract_reference)
-        c_f=convert_factory()
-        dict_obj=c_f.convert(data)
-        return dict_obj
+        if isinstance(data[0],abstract_reference):
+            c_f=convert_factory()
+            dict_obj=c_f.convert(data)
+            return dict_obj
+        elif isinstance(data[0],dict):
+            return data
+        else:
+            argument_exception("object should be absatrct reference or dict")
 
     

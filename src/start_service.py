@@ -10,6 +10,11 @@ from .models.receipt_model import receipt_model
 from .models.proportion import proportion
 from .models.step import step
 from .dto.abstract_dto import abstract_dto
+from .dto.storage_dto import storage_dto
+from .models.storage_model import storage_model
+from .models.transaction_model import transaction_model
+from .dto.transaction_dto import transaction_dto
+import datetime
 class start_service:
     """
     Class that creates all default data and start work of all service
@@ -27,6 +32,8 @@ class start_service:
         self.__reposity.data[reposity.range_key()] = {}
         self.__reposity.data[reposity.range_group_key()] = {}
         self.__reposity.data[reposity.receipt_key()] = {}
+        self.__reposity.data[reposity.storage_key()]={}
+        self.__reposity.data[reposity.transaction_key()]={}
 
     """
     Реализация Singleton
@@ -298,9 +305,44 @@ class start_service:
         item=self.__create_default_value(reposity.receipt_key(),receipt_model.create("Хачапури по Адыгейски",proportions,steps,60.0))
         return item
 
-    def save_defaults_to_config(self,filename):
+    def create_storage_a(self):
+        item=storage_model()
+        item.name="Storage A"
+        self.__create_default_value(reposity.storage_key(),item)
+
+    def create_storage_b(self):
+        item=storage_model()
+        item.name="Storage B"
+        self.__create_default_value(reposity.storage_key(),item)
+
+    def default_create_storages(self):
+        self.create_storage_a()
+        self.create_storage_b()
+    
+    def default_create_transactions(self):
+        storage=self.reposity.data[reposity.storage_key()]["Storage A"]
+        for ind,range in enumerate(self.reposity.data[reposity.range_key()].values()):
+            item=transaction_model(f"Transaction up #{ind+1}")
+            item.range=range
+            item.storage=storage
+            item.amount=10.0
+            item.unit=range.unit
+            item.datetime=datetime.datetime.now()
+            self.__create_default_value(reposity.transaction_key(),item)
+        
+        for ind,range in enumerate(self.reposity.data[reposity.range_key()].values()):
+            item=transaction_model(f"Transaction down #{ind+1}")
+            item.range=range
+            item.storage=storage
+            item.amount=-5.0
+            item.unit=range.unit
+            item.datetime=datetime.datetime.now()+datetime.timedelta(days=1)
+            self.__create_default_value(reposity.transaction_key(),item)
+        
+
+    def save_data_to_config(self,filename):
         """
-        Function that saves all default values to config
+        Function that saves all data values to config
         """
         data=json.dumps(self.reposity.to_json())
         try:
@@ -338,7 +380,7 @@ class start_service:
         if len(units) == 0:
             return False
          
-        for unit in units:
+        for unit in units.values():
             dto = unit_dto().create(unit)
             item = unit_model.from_dto(dto, self.__cache)
             self.__save_item( reposity.unit_key(), dto, item )
@@ -352,7 +394,7 @@ class start_service:
         if len(range_groups) == 0:
             return False
 
-        for range_group in range_groups:
+        for range_group in range_groups.values():
             dto = range_group_dto().create(range_group)    
             item = range_group_model.from_dto(dto, self.__cache)
             self.__save_item(reposity.range_group_key(), dto, item)
@@ -366,18 +408,45 @@ class start_service:
         if len(ranges) == 0:
             return False
          
-        for range in ranges:
+        for range in ranges.values():
             dto = range_dto().create(range)
             item = range_model.from_dto(dto, self.__cache)
             self.__save_item( reposity.range_key(), dto, item )
 
-        return True        
+        return True     
+    
+    def __convert_storages(self, data: dict) -> bool:
+        model_validator.validate(data, dict)      
+        storages = data['storages'] if 'storages' in data else []   
+        if len(storages) == 0:
+            return False
+         
+        for storage in storages.values():
+            dto = storage_dto().create(storage)
+            item = storage_model.from_dto(dto, self.__cache)
+            self.__save_item( reposity.storage_key(), dto, item )
+
+        return True   
+
+    def __convert_transactions(self, data: dict) -> bool:
+        model_validator.validate(data, dict)      
+        transactions = data['transactions'] if 'transactions' in data else []   
+        if len(transactions) == 0:
+            return False
+         
+        for transaction in transactions.values():
+            dto = transaction_dto().create(transaction)
+            item = transaction_model.from_dto(dto, self.__cache)
+            self.__save_item( reposity.transaction_key(), dto, item )
+
+        return True   
+
     def __convert_receipt(self,data:dict)->bool:
         model_validator.validate(data, dict)
         receipts=data["receipts"] if "receipts" in data else []   
         if len(receipts)==0:
             return False
-        for receipt in receipts:
+        for receipt in receipts.values():
             dto=receipt_dto().create(receipt)
             item=receipt_model.from_dto(dto,self.__cache)
             self.__save_item(reposity.receipt_key(),dto,item)
@@ -392,6 +461,8 @@ class start_service:
         self.__convert_groups(data)  
         self.__convert_ranges(data)
         self.__convert_receipt(data)
+        self.__convert_storages(data)
+        self.__convert_transactions(data)
         return True
 
     def start(self,create_default:bool=True):
@@ -405,5 +476,39 @@ class start_service:
             self.default_create_range()
             self.default_create_range_group()
             self.default_create_receipt()
+            self.default_create_storages()
+            self.default_create_transactions()
+        else:
+            self.load("default_data.json")
+    
+
+    def create_balance_sheet(self,start_datetime:datetime.datetime,end_datetime:datetime.datetime,storage_name:str):
+        transactions=list(self.reposity.data[reposity.transaction_key()].values())
+        if storage_name is not None:
+            transactions=list(filter(lambda x: x.storage.name==storage_name,transactions))
+        balance_sheet={}
+        for range_obj in list(self.reposity.data[reposity.range_key()].values()):
+            balance_sheet_item={}
+            balance_sheet_item["range"]=range_obj.name
+            balance_sheet_item["unit"]=range_obj.unit.get_base()[0]
+            balance_sheet_item["start_balance"]=0
+            balance_sheet_item["end_balance"]=0
+            balance_sheet_item["in"]=0
+            balance_sheet_item["out"]=0
+            balance_sheet[range_obj.name]=balance_sheet_item
+        for transaction in transactions:
+            if transaction.datetime<=end_datetime:
+                unit_name,coef=transaction.unit.get_base()
+                if transaction.datetime<start_datetime:
+                    balance_sheet[transaction.range.name]["unit"]=unit_name
+                    balance_sheet[transaction.range.name]["start_balance"]+=transaction.amount*coef
+                else:
+                    balance_sheet[transaction.range.name]["unit"]=unit_name
+                    balance_sheet[transaction.range.name]["end_balance"]+=transaction.amount*coef
+                    balance_sheet[transaction.range.name]["in"]+=abs(transaction.amount*coef) if transaction.amount>0 else 0
+                    balance_sheet[transaction.range.name]["out"]+=abs(transaction.amount*coef) if transaction.amount<0 else 0
+        return list(balance_sheet.values())
+
+        
     
 

@@ -87,6 +87,10 @@ class settings_manager:
                 self.__settings.response_format=data["api"]["default_response_format"]
             else:
                 return False
+            if "first_start" in data.keys():
+                self.__settings.first_start=data["first_start"]
+            else:
+                return False
             return True
         except Exception as e:
             

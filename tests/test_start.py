@@ -314,7 +314,7 @@ class TestStart:
         filepath="./tests/test_dir/test_default_config.json"
         if os.path.exists(filepath):
             os.remove(filepath)
-        assert start_service_instance.save_defaults_to_config(filepath)==True
+        assert start_service_instance.save_data_to_config(filepath)==True
         with open(filepath,"r",encoding="UTF-8") as json_file:
             json_obj=json.load(json_file)
         assert len(json_obj["receipts"])==2
@@ -326,7 +326,7 @@ class TestStart:
         """
         Test of start_service to load from dafaults to config 
         """
-        filepath="./tests/test_default_config.json"
+        filepath="./tests/test_dir/test_default_config.json"
         s_s=start_service()
         s_s.start(False)
         assert s_s.load(filepath)==True
@@ -334,6 +334,8 @@ class TestStart:
         assert len(s_s.reposity.data[reposity.unit_key()])==5
         assert len(s_s.reposity.data[reposity.range_key()])==12
         assert len(s_s.reposity.data[reposity.range_group_key()])==1
+        assert len (s_s.reposity.data[reposity.transaction_key()])==24
+        assert len (s_s.reposity.data[reposity.storage_key()])==2
     
     def test_error_load_config_to_start_service(self):
         """

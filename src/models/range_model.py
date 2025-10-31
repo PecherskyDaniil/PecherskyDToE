@@ -110,15 +110,15 @@ class range_model(abstract_reference):
         item.uuid=dto.uuid
         return item
 
-    def to_dto(model:"range_model"):
+    def to_dto(self):
         """
         Function that convert instance to dto
         """
         item=range_dto()
-        item.name=model.name
-        item.uuid=model.uuid
-        item.unit_id=model.unit.uuid
-        item.group_id=model.group.uuid
-        item.full_name=model.full_name
+        item.name=self.name
+        item.uuid=self.uuid
+        item.unit_id=self.unit.uuid
+        item.group_id=self.group.uuid
+        item.full_name=self.full_name
         return item
     
