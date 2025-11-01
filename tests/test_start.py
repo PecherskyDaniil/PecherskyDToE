@@ -347,3 +347,16 @@ class TestStart:
         assert s_s.load(filepath)==False
         with pytest.raises(operation_exception):
             s_s.load("")
+    
+    def test_valid_create_balance_sheet(self):
+        s_s=start_service()
+        s_s.start(True)
+        result=s_s.create_balance_sheet(datetime.datetime.now()+datetime.timedelta(hours=2),
+                                 datetime.datetime.now()+datetime.timedelta(days=2),
+                                 "Storage A")
+        
+        assert len(result)==len(list(s_s.reposity.data[reposity.range_key()].values()))
+        line1=result[0]
+        assert line1["end_balance"]==line1["start_balance"]-line1["out"]+line1["in"]
+
+

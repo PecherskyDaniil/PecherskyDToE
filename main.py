@@ -134,7 +134,7 @@ def save_reposity():
     Save reposity to file
     """
     try:
-        start_service_instance.save_data_to_config("default_data.json")
+        start_service_instance.save_data("default_data.json")
         return Response(
             status=200,
             response=json.dumps({"detail":"reposity successfuly saved to file"}),

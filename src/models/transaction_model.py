@@ -15,17 +15,8 @@ class transaction_model(abstract_reference):
     __amount:float
     __unit:unit_model
 
-    def __init__(self,name:str=None,datetime:datetime=None,range_obj:range_model=None,storage:storage_model=None,amount:float=None,unit:unit_model=None):
-        """
-        Constructor of class
-        """
-        super().__init__(name)
-        self.amount=amount
-        self.datetime=datetime
-        self.storage=storage
-        self.range=range_obj
-        self.unit=unit
-
+    def __init__(self):
+        super().__init__(None)
     @property
     def datetime(self) -> datetime:
         """
@@ -137,7 +128,8 @@ class transaction_model(abstract_reference):
         """
         model_validator.validate(dto, transaction_dto)
         model_validator.validate(cache, dict)
-        item=transaction_model(dto.name)
+        item=transaction_model()
+        item.name=dto.name
         item.uuid=dto.uuid
         item.range=cache[ dto.range_id ] if dto.range_id in cache else None
         item.storage=cache[ dto.storage_id ] if dto.storage_id in cache else None

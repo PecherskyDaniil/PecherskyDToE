@@ -322,7 +322,8 @@ class start_service:
     def default_create_transactions(self):
         storage=self.reposity.data[reposity.storage_key()]["Storage A"]
         for ind,range in enumerate(self.reposity.data[reposity.range_key()].values()):
-            item=transaction_model(f"Transaction up #{ind+1}")
+            item=transaction_model()
+            item.name=f"Transaction up #{ind+1}"
             item.range=range
             item.storage=storage
             item.amount=10.0
@@ -331,7 +332,8 @@ class start_service:
             self.__create_default_value(reposity.transaction_key(),item)
         
         for ind,range in enumerate(self.reposity.data[reposity.range_key()].values()):
-            item=transaction_model(f"Transaction down #{ind+1}")
+            item=transaction_model()
+            item.name=f"Transaction down #{ind+1}"
             item.range=range
             item.storage=storage
             item.amount=-5.0
@@ -352,6 +354,26 @@ class start_service:
         except Exception as e:
             return False
     
+    def save_data(self,filename):
+        """
+        Function that saves all data in balance_sheet
+        """
+        data={}
+        data[reposity.unit_json_key()]=convert_factory().convert(self.reposity.data[reposity.unit_key()])
+        data[reposity.range_group_json_key()]=convert_factory().convert(self.reposity.data[reposity.range_group_key()])
+        data[reposity.range_json_key()]=convert_factory().convert(self.reposity.data[reposity.range_key()])
+        data[reposity.receipt_json_key()]=convert_factory().convert(self.reposity.data[reposity.receipt_key()])
+        data[reposity.storage_json_key()]=convert_factory().convert(self.reposity.data[reposity.storage_key()])
+        data[reposity.transcation_json_key()]=convert_factory().convert(self.reposity.data[reposity.transaction_key()])
+        data=json.dumps(data,indent=4)
+        try:
+            with open(filename,"w",encoding="UTF-8") as config:
+                config.write(data)
+                return True
+        except Exception as e:
+            return False
+
+
     def load(self,filename:str):
         """
         Function that load data from file
@@ -499,16 +521,11 @@ class start_service:
         for transaction in transactions:
             if transaction.datetime<=end_datetime:
                 unit_name,coef=transaction.unit.get_base()
+                balance_sheet[transaction.range.name]["unit"]=unit_name
+                balance_sheet[transaction.range.name]["end_balance"]+=transaction.amount*coef
                 if transaction.datetime<start_datetime:
-                    balance_sheet[transaction.range.name]["unit"]=unit_name
                     balance_sheet[transaction.range.name]["start_balance"]+=transaction.amount*coef
                 else:
-                    balance_sheet[transaction.range.name]["unit"]=unit_name
-                    balance_sheet[transaction.range.name]["end_balance"]+=transaction.amount*coef
                     balance_sheet[transaction.range.name]["in"]+=abs(transaction.amount*coef) if transaction.amount>0 else 0
                     balance_sheet[transaction.range.name]["out"]+=abs(transaction.amount*coef) if transaction.amount<0 else 0
         return list(balance_sheet.values())
-
-        
-    
-

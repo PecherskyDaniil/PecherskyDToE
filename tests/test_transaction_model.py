@@ -15,7 +15,8 @@ class TestTransactionModel:
         """
         Test valid create transaction
         """
-        transaction=transaction_model("A")
+        transaction=transaction_model()
+        transaction.name="A"
         unit1=unit_model("gramm",None,1.0)
         unit2=unit_model("kilo",unit1,1000.0)
         group=range_group_model("food")
@@ -81,7 +82,13 @@ class TestTransactionModel:
         cache["345"]=range_model("sugar","sweet sugar",cache["123"],cache["234"])
         cache["456"]=range_model("salt","salty salt",cache["123"],cache["234"])
         #Создание
-        transaction_obj=transaction_model("AAA",datetime(2025,12,31,12,0,0,0),cache["345"],cache["555"],10.0,cache["123"])     
+        transaction_obj=transaction_model()     
+        transaction_obj.name="AAA"
+        transaction_obj.datetime=datetime(2025,12,31,12,0,0,0)
+        transaction_obj.range=cache["345"]
+        transaction_obj.storage=cache["555"]
+        transaction_obj.amount=10.0
+        transaction_obj.unit=cache["123"]
         #Присваивание
         transaction_dto_obj=transaction_obj.to_dto()
         #Проверка
