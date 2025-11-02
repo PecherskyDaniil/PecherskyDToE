@@ -12,5 +12,7 @@ class TestReposity:
         assert "units" in data.keys()
         assert "ranges" in data.keys()
         assert "range_groups" in data.keys()
+        assert "transactions" in data.keys()
+        assert "storages" in data.keys()
 
     

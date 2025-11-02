@@ -100,4 +100,15 @@ class TestUnitModel:
         assert unit_dto_obj.name=="kilo"
         assert unit_dto_obj.base_id==cache["123"].uuid
         assert unit_dto_obj.coef==1000.0
+        
+    def test_valid_get_base_function(self):
+        """
+        Test on valid get base function work
+        """
+        #Подготовка
+        unit1=unit_model("a",None,1.0)
+        unit2=unit_model("b",unit1,100.0)
+        #проверка
+        assert unit1.get_base()==("a",1.0)
+        assert unit2.get_base()==("a",100.0)
     

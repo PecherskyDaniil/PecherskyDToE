@@ -9,6 +9,7 @@ class settings_model(abstract_reference):
     """
     __company:company_model=None
     __response_format:str
+    __first_start:bool=None
     def __init__(self,name:str="settings"):
         """
         Constructor of class
@@ -29,6 +30,20 @@ class settings_model(abstract_reference):
         Setter for property response_format
         """
         self.__response_format=value
+    
+    @property
+    def first_start(self)->str:
+        """
+        Function that returns property first_start
+        """
+        return self.__first_start
+    @first_start.setter
+    def first_start(self,value:str):
+        """
+        Setter for property response_format
+        """
+        self.__first_start=value
+
     @property
     def company_settings(self)->company_model:
         """
