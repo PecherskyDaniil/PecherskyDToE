@@ -380,7 +380,6 @@ class TestStart:
         result=s_s.create_balance_sheet(start_datetime_filters,
                                         main_datteime_filters,
                                         storage_filters)
-        print(result)
         assert len(result)==len(list(s_s.reposity.data[reposity.range_key()].values()))
         line1=result[0]
         assert line1["end_balance"]==line1["start_balance"]-line1["out"]+line1["in"]
