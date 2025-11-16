@@ -506,12 +506,14 @@ class start_service:
             self.load("default_data.json")
     
 
-    def create_balance_sheet(self,start_datetime_filters:list,main_datetime_filters:list,other_filters:list):
+    def create_balance_sheet(self,start_datetime_filters:list,main_datetime_filters:list,storage_filters:list,other_filters:list=[]):
         transactions=list(self.reposity.data[reposity.transaction_key()].values())
         base_prototype=prototype_report(transactions)
         
+        base_filtered_prototype=base_prototype.filter(other_filters)
+
         balance_sheet=[]
-        storage_filtered_prototype=base_prototype.filter(other_filters)
+        storage_filtered_prototype=base_filtered_prototype.filter(storage_filters)
         
         start_balance_datetime_filtered_prototype=storage_filtered_prototype.filter(start_datetime_filters)
         

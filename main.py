@@ -196,17 +196,20 @@ def get_filtered_balance_sheet():
     filter_objs=[]
     start_datetime_filters=[]
     main_datetime_filters=[]
+    storage_filters=[]
     if "filters" in content.keys():
         for filter_json in content["filters"]:
+            filter_obj=filter_dto.from_dict(filter_json)
             if filter_json["field_name"]=="datetime":
-                filter_obj=filter_dto.from_dict(filter_json)
                 filter_obj.value=datetime.datetime.strptime(filter_obj.value,"%Y-%m-%dT%H:%M:%S")
                 main_datetime_filters.append(filter_obj)
                 if filter_json["type"]=="gt" or filter_json["type"]=="ge":
                     start_datetime_filters.append(filter_dto.create("datetime","lt",filter_obj.value))
+            elif filter_json["field_name"].split(".")[0]=="storage":
+                storage_filters.append(filter_obj)
             else:
-                filter_objs.append(filter_dto.from_dict(filter_json))
-    balance_sheet=start_service_instance.create_balance_sheet(start_datetime_filters,main_datetime_filters,filter_objs)
+                filter_objs.append(filter_obj)
+    balance_sheet=start_service_instance.create_balance_sheet(start_datetime_filters,main_datetime_filters,storage_filters,filter_objs)
     result_format=factory_entity.create("csv")()
     result=result_format.create(balance_sheet)
     return Response(
@@ -246,7 +249,7 @@ def get_filtered_model_data(model:str,format:str):
             content_type=result_format.response_type(),
             )
     except Exception as e:
-        raise e
+        #raise e
         if str(e)=="Формат не верный":
             return Response(
                 status=404,
