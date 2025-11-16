@@ -42,12 +42,14 @@ class Operator(Enum):
     """
     Special class that contains all operators of compare
     """
-    EQ=auto() #=
-    GT=auto() #>
-    LT=auto() #<
-    GE=auto() #>=
-    LE=auto() #<=
-    NE=auto() #!=
+    EQ="eq" #=
+    GT="gt" #>
+    LT="lt" #<
+    GE="ge" #>=
+    LE="le" #<=
+    NE="ne" #!=
+    IN="in"
+    LIKE="like"
 
 
 class limit_model():

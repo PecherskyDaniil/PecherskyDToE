@@ -10,6 +10,8 @@ from src.start_service import start_service
 from src.reposity import reposity
 from src.logics.response_formats import response_formats
 from src.models.transaction_model import transaction_model
+from src.dto.filter_dto import filter_dto
+from src.core.prototype import prototype
 import datetime
 import json
 app = connexion.FlaskApp(__name__)
@@ -165,7 +167,18 @@ def get_balance_sheet():
             response=json.dumps({"detail":"cant resolve begin date or end date"}),
             content_type="application/json"
         )
-    balance_sheet=start_service_instance.create_balance_sheet(start_datetime,end_datetime,storage_name)
+    start_balance_datetime_filters=[
+            filter_dto.create("datetime","lt",start_datetime)
+        ]
+    main_balance_datetime_filters=[
+        filter_dto.create("datetime","lt",end_datetime),
+        filter_dto.create("datetime","gt",start_datetime)
+    ]
+    storage_obj=start_service_instance.reposity.data[reposity.storage_key()][storage_name]
+    storage_filters=[
+        filter_dto.create("storage","eq",storage_obj)
+    ]
+    balance_sheet=start_service_instance.create_balance_sheet(start_balance_datetime_filters,main_balance_datetime_filters,storage_filters)
     result_format=factory_entity.create("csv")()
     result=result_format.create(balance_sheet)
     return Response(
@@ -173,6 +186,82 @@ def get_balance_sheet():
             status=200,
             content_type=result_format.response_type(),
             )
+
+@app.route("/api/reposity/get/balance_sheet/filtered", methods=['POST'])
+def get_filtered_balance_sheet():
+    """
+    Get filtered balance sheets
+    """
+    content=request.get_json()
+    filter_objs=[]
+    start_datetime_filters=[]
+    main_datetime_filters=[]
+    storage_filters=[]
+    if "filters" in content.keys():
+        for filter_json in content["filters"]:
+            filter_obj=filter_dto.from_dict(filter_json)
+            if filter_json["field_name"]=="datetime":
+                filter_obj.value=datetime.datetime.strptime(filter_obj.value,"%Y-%m-%dT%H:%M:%S")
+                main_datetime_filters.append(filter_obj)
+                if filter_json["type"]=="gt" or filter_json["type"]=="ge":
+                    start_datetime_filters.append(filter_dto.create("datetime","lt",filter_obj.value))
+            elif filter_json["field_name"].split(".")[0]=="storage":
+                storage_filters.append(filter_obj)
+            else:
+                filter_objs.append(filter_obj)
+    balance_sheet=start_service_instance.create_balance_sheet(start_datetime_filters,main_datetime_filters,storage_filters,filter_objs)
+    result_format=factory_entity.create("csv")()
+    result=result_format.create(balance_sheet)
+    return Response(
+            response=result,
+            status=200,
+            content_type=result_format.response_type(),
+            )
+
+
+@app.route("/api/<model>/format/<format>/filtered", methods=['POST'])
+def get_filtered_model_data(model:str,format:str):
+    """
+    Получить фильтрованную модель данных в указанном формате
+    """
+    if model not in start_service_instance.reposity.data.keys():
+        return Response(
+            status=404,
+            response=f"There isn't model with name {model}",
+            content_type="text/plain"
+        )
+    try:
+        content=request.get_json()
+        filter_objs=[]
+        if "filters" in content.keys():
+            for filter_json in content["filters"]:
+                filter_objs.append(filter_dto.from_dict(filter_json))
+        result_format=factory_entity.create(format)()
+        base_prototype=prototype(list(start_service_instance.reposity.data[model].values()))
+        filtered_prototype=prototype.filter(base_prototype,filter_objs)
+        if len(filtered_prototype.data)==0:
+            result="empty"
+        else:
+            result=result_format.create(filtered_prototype.data)
+        return Response(
+            response=result,
+            status=200,
+            content_type=result_format.response_type(),
+            )
+    except Exception as e:
+        #raise e
+        if str(e)=="Формат не верный":
+            return Response(
+                status=404,
+                response="Format isn't supported",
+                content_type="text/plain"
+            )
+        else:
+            return Response(
+                response="Server problem",
+                status=500,
+                content_type="text/plain",
+                )
 
 
 if __name__ == '__main__':
