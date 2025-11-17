@@ -351,10 +351,35 @@ class TestStart:
     def test_valid_create_balance_sheet(self):
         s_s=start_service()
         s_s.start(True)
-        result=s_s.create_balance_sheet(datetime.datetime.now()+datetime.timedelta(hours=2),
-                                 datetime.datetime.now()+datetime.timedelta(days=2),
-                                 "Storage A")
-        
+        start_datetime_filters=[
+            filter_dto.create(
+                "datetime",
+                "lt",
+                datetime.datetime.now()+datetime.timedelta(hours=2)
+            )
+        ]
+        main_datteime_filters=[
+            filter_dto.create(
+                "datetime",
+                "gt",
+                datetime.datetime.now()+datetime.timedelta(hours=2)
+            ),
+            filter_dto.create(
+                "datetime",
+                "lt",
+                datetime.datetime.now()+datetime.timedelta(days=2)
+            )
+        ]
+        storage_filters=[
+            filter_dto.create(
+                "storage.name",
+                "like",
+                "Storage A"
+            )
+        ]
+        result=s_s.create_balance_sheet(start_datetime_filters,
+                                        main_datteime_filters,
+                                        storage_filters,[])
         assert len(result)==len(list(s_s.reposity.data[reposity.range_key()].values()))
         line1=result[0]
         assert line1["end_balance"]==line1["start_balance"]-line1["out"]+line1["in"]

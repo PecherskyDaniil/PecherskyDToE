@@ -15,6 +15,8 @@ from .models.storage_model import storage_model
 from .models.transaction_model import transaction_model
 from .dto.transaction_dto import transaction_dto
 import datetime
+from .logics.prototype_report import prototype_report
+from .dto.filter_dto import filter_dto
 class start_service:
     """
     Class that creates all default data and start work of all service
@@ -504,28 +506,42 @@ class start_service:
             self.load("default_data.json")
     
 
-    def create_balance_sheet(self,start_datetime:datetime.datetime,end_datetime:datetime.datetime,storage_name:str):
+    def create_balance_sheet(self,start_datetime_filters:list,main_datetime_filters:list,storage_filters:list,other_filters:list=[]):
         transactions=list(self.reposity.data[reposity.transaction_key()].values())
-        if storage_name is not None:
-            transactions=list(filter(lambda x: x.storage.name==storage_name,transactions))
-        balance_sheet={}
+        base_prototype=prototype_report(transactions)
+        
+        base_filtered_prototype=base_prototype.filter(other_filters)
+
+        balance_sheet=[]
+        storage_filtered_prototype=base_filtered_prototype.filter(storage_filters)
+        
+        start_balance_datetime_filtered_prototype=storage_filtered_prototype.filter(start_datetime_filters)
+        
+        main_datetime_filtered_prototype=storage_filtered_prototype.filter(main_datetime_filters)
         for range_obj in list(self.reposity.data[reposity.range_key()].values()):
+            range_filters=[
+                filter_dto.create("range","eq",range_obj)
+            ]
             balance_sheet_item={}
             balance_sheet_item["range"]=range_obj.name
-            balance_sheet_item["unit"]=range_obj.unit.get_base()[0]
+            balance_sheet_item["unit"]=None
             balance_sheet_item["start_balance"]=0
             balance_sheet_item["end_balance"]=0
             balance_sheet_item["in"]=0
             balance_sheet_item["out"]=0
-            balance_sheet[range_obj.name]=balance_sheet_item
-        for transaction in transactions:
-            if transaction.datetime<=end_datetime:
-                unit_name,coef=transaction.unit.get_base()
-                balance_sheet[transaction.range.name]["unit"]=unit_name
-                balance_sheet[transaction.range.name]["end_balance"]+=transaction.amount*coef
-                if transaction.datetime<start_datetime:
-                    balance_sheet[transaction.range.name]["start_balance"]+=transaction.amount*coef
-                else:
-                    balance_sheet[transaction.range.name]["in"]+=abs(transaction.amount*coef) if transaction.amount>0 else 0
-                    balance_sheet[transaction.range.name]["out"]+=abs(transaction.amount*coef) if transaction.amount<0 else 0
-        return list(balance_sheet.values())
+            start_balance_range_filtered_prototype=prototype_report.filter(start_balance_datetime_filtered_prototype,range_filters)
+            for transaction_obj in start_balance_range_filtered_prototype.data:
+                unit_name,coef=transaction_obj.unit.get_base()
+                balance_sheet_item["unit"]=unit_name
+                balance_sheet_item["start_balance"]+=transaction_obj.amount*coef
+                balance_sheet_item["end_balance"]+=transaction_obj.amount*coef
+            main_balance_range_filtered_prototype=prototype_report.filter(main_datetime_filtered_prototype,range_filters)
+            for transaction_obj in main_balance_range_filtered_prototype.data:
+                unit_name,coef=transaction_obj.unit.get_base()
+                balance_sheet_item["unit"]=unit_name
+                balance_sheet_item["end_balance"]+=transaction_obj.amount*coef    
+                balance_sheet_item["in"]+=abs(transaction_obj.amount*coef) if transaction_obj.amount>0 else 0
+                balance_sheet_item["out"]+=abs(transaction_obj.amount*coef) if transaction_obj.amount<0 else 0
+            
+            balance_sheet.append(balance_sheet_item)
+        return balance_sheet
