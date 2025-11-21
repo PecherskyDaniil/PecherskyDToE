@@ -350,6 +350,9 @@ class TestStart:
             s_s.load("")
     
     def test_valid_create_balance_sheet(self):
+        """
+        Test valid create of balance_sheet
+        """
         s_s=start_service()
         s_s.start(True)
         start_datetime_filters=[
@@ -387,6 +390,9 @@ class TestStart:
 
 
     def test_valid_date_of_block(self):
+        """
+        Test valid create of block_datetime
+        """
         start_datetime_filters=[
             filter_dto.create("datetime","lt",datetime.datetime(2024,11,1,12,0,0,0))
         ]
@@ -412,6 +418,9 @@ class TestStart:
 
 
     def test_valid_create_remnant(self):
+        """
+        Test valid create of remnants
+        """
         s_s=start_service()
         s_s.block_datetime=datetime.datetime(2024,10,1,12,0,0,0)
         s_s.start()
@@ -422,6 +431,9 @@ class TestStart:
         assert remnants[0].remnant_value==765.0
     
     def test_time_of_query_with_remnants(self):
+        """
+        Нагрузочное тестирование остатков
+        """
         start_datetime_filters=[
             filter_dto.create("datetime","lt",datetime.datetime(2024,11,1,12,0,0,0))
         ]
@@ -448,4 +460,4 @@ class TestStart:
         with open("./remnants_test_results.txt","w") as f:
             f.write(f"Time with remnants: {t1-t0}\n")
             f.write(f"Time without remnants: {t2-t1}\n")
-            
+
