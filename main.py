@@ -23,8 +23,8 @@ if not(load_result):
     raise Exception("cant load config file")
 
 start_service_instance=start_service()
+start_service_instance.block_datetime=settings_manager_instance.settings.block_datetime
 start_service_instance.start(settings_manager_instance.settings.first_start)
-
 @app.route("/api/accessibility", methods=['GET'])
 def formats():
     """
@@ -59,6 +59,7 @@ def get_model_data(model:str,format:str):
                 content_type="text/plain"
             )
         else:
+            #raise e
             return Response(
                 response="Server problem",
                 status=500,
@@ -178,7 +179,7 @@ def get_balance_sheet():
     storage_filters=[
         filter_dto.create("storage","eq",storage_obj)
     ]
-    balance_sheet=start_service_instance.create_balance_sheet(start_balance_datetime_filters,main_balance_datetime_filters,storage_filters)
+    balance_sheet=start_service_instance.create_balance_sheet_with_remnants(start_balance_datetime_filters,main_balance_datetime_filters,storage_filters)
     result_format=factory_entity.create("csv")()
     result=result_format.create(balance_sheet)
     return Response(
@@ -263,6 +264,67 @@ def get_filtered_model_data(model:str,format:str):
                 content_type="text/plain",
                 )
 
+@app.route("/api/block_datetime", methods=['POST'])
+def change_block_datetime():
+    """
+    Получить фильтрованную модель данных в указанном формате
+    """
+    try:
+        content=request.get_json()
+        new_block_datetime=datetime.datetime.strptime(content["block_datetime"],"%Y-%m-%dT%H:%M:%S")
+        start_service_instance.block_datetime=new_block_datetime
+        start_service_instance.create_block_remnant()
+        return Response(
+            response=json.dumps({"message":"block datetime changed successfuly"}),
+            status=200,
+            content_type="application/json",
+            )
+    except Exception as e:
+        return Response(
+            response="Server problem",
+            status=500,
+            content_type="text/plain",
+            )
 
+@app.route("/api/block_datetime", methods=['GET'])
+def get_block_datetime():
+    """
+    Получить фильтрованную модель данных в указанном формате
+    """
+    try:
+        return Response(
+            response=json.dumps({"block_datetime":start_service_instance.block_datetime.strftime("%Y-%m-%dT%H:%M:%S")}),
+            status=200,
+            content_type="application/json",
+            )
+    except Exception as e:
+        #raise e
+        return Response(
+            response="Server problem",
+            status=500,
+            content_type="text/plain",
+            )
+    
+@app.route("/api/remnants/<datetime_obj>", methods=['GET'])
+def get_remnants_by_datetime(datetime_obj:str):
+    """
+    Получить фильтрованную модель данных в указанном формате
+    """
+    try:
+        remnants=start_service_instance.create_remnant(datetime.datetime.strptime(datetime_obj,"%Y-%m-%dT%H:%M:%S"))
+        result_format=factory_entity.create_default()()
+        result=result_format.create(remnants)
+        return Response(
+            response=result,
+            status=200,
+            content_type=result_format.response_type(),
+            )
+    except Exception as e:
+        #raise e
+        return Response(
+            response="Server problem",
+            status=500,
+            content_type="text/plain",
+            )
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port = 8080)

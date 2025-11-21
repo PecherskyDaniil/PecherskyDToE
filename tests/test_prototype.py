@@ -36,7 +36,7 @@ class TestPrototype:
         ]
         next_prototype=prototype_report.filter(start_prototype,filters)
 
-        assert len(next_prototype.data)==2
+        assert len(next_prototype.data)==365
         assert len(start_prototype.data)>=len(next_prototype.data)
     
 

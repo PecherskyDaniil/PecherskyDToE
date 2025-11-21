@@ -1,6 +1,7 @@
 from .abstract_reference import *
 from .company_model import company_model
 from ..logics.abstract_response import abstract_response
+import datetime
 
 class settings_model(abstract_reference):
     """
@@ -10,6 +11,7 @@ class settings_model(abstract_reference):
     __company:company_model=None
     __response_format:str
     __first_start:bool=None
+    __block_datetime:datetime.datetime=None
     def __init__(self,name:str="settings"):
         """
         Constructor of class
@@ -51,6 +53,19 @@ class settings_model(abstract_reference):
         """
         return self.__company
 
+
+    @property
+    def block_datetime(self)->str:
+        """
+        Function that returns property block_datetime
+        """
+        return self.__block_datetime
+    @block_datetime.setter
+    def block_datetime(self,value:datetime.datetime):
+        """
+        Setter for property block_datetime
+        """
+        self.__block_datetime=value
 
     def default(self):
         """
