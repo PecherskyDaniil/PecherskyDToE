@@ -8,9 +8,7 @@ import datetime
 
 class remnant_model(abstract_reference):
     """
-    Class that contain data of step of receipt's instruction 
-
-    step_description:str - info about step
+    Class that contain data remnant
     """
     __range:range_model
     __unit:unit_model

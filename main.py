@@ -292,6 +292,8 @@ def get_block_datetime():
     Получить фильтрованную модель данных в указанном формате
     """
     try:
+        
+
         return Response(
             response=json.dumps({"block_datetime":start_service_instance.block_datetime.strftime("%Y-%m-%dT%H:%M:%S")}),
             status=200,
@@ -305,12 +307,14 @@ def get_block_datetime():
             content_type="text/plain",
             )
     
-@app.route("/api/remnants/<datetime_obj>", methods=['GET'])
-def get_remnants_by_datetime(datetime_obj:str):
+@app.route("/api/remnants", methods=['POST'])
+def get_remnants_by_datetime():
     """
-    Получить фильтрованную модель данных в указанном формате
+    Получить остатки на конкретную дату
     """
     try:
+        content=request.get_json()
+        datetime_obj=content["datetime"]
         remnants=start_service_instance.create_remnant(datetime.datetime.strptime(datetime_obj,"%Y-%m-%dT%H:%M:%S"))
         result_format=factory_entity.create_default()()
         result=result_format.create(remnants)
@@ -320,7 +324,7 @@ def get_remnants_by_datetime(datetime_obj:str):
             content_type=result_format.response_type(),
             )
     except Exception as e:
-        #raise e
+        raise e
         return Response(
             response="Server problem",
             status=500,

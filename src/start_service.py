@@ -368,38 +368,66 @@ class start_service:
         Create remnants before block_datetime
         """
         model_validator.validate(target_datetime,datetime.datetime)
-        remnants=[]
+        remnants={}
         datetime_filters=[filter_dto.create("datetime","lt",target_datetime)]
+        base_remnants=None
         if self.reposity.data[reposity.remnant_key()]!={} and target_datetime>=self.block_datetime:
-            base_remnants=prototype_report(list(self.reposity.data[reposity.remnant_key()].values()))
+            base_remnants=self.reposity.data[reposity.remnant_key()]
             datetime_filters.append(filter_dto.create("datetime","ge",self.block_datetime))
         transactions=list(self.reposity.data[reposity.transaction_key()].values())
         base_prototype=prototype_report(transactions)
+        datetime_filtered_prototype=base_prototype.filter(datetime_filters)
+        for transaction_obj in datetime_filtered_prototype.data:
+            if transaction_obj.storage.name not in remnants.keys():
+                remnants[transaction_obj.storage.name]={}
+            if transaction_obj.range.name not in remnants[transaction_obj.storage.name].keys():
+                unit_name,coef=transaction_obj.unit.get_base()
+                unit_obj=self.reposity.data[reposity.unit_key()][unit_name]
+                remnant_start_value=0.0
+                if base_remnants is not None:
+                    remnant_start_value=base_remnants[f"{transaction_obj.storage.name}-{transaction_obj.range.name}"].remnant_value
+                remnants[transaction_obj.storage.name][transaction_obj.range.name]=remnant_model.create(
+                    transaction_obj.range,
+                    transaction_obj.storage,
+                    unit_obj,
+                    remnant_start_value,
+                    target_datetime
+                    )
+                remnants[transaction_obj.storage.name][transaction_obj.range.name].name=f"{transaction_obj.storage.name}-{transaction_obj.range.name}"
+            unit_name,coef=transaction_obj.unit.get_base()
+            remnants[transaction_obj.storage.name][transaction_obj.range.name].remnant_value+=transaction_obj.amount*coef
+        result=[]
+        for storage_remnants in remnants.values():
+            result+=list(storage_remnants.values())
+        return result
+            
+
+        #base_prototype=prototype_report(transactions)
         
-        for storage_obj in self.reposity.data[reposity.storage_key()].values():
-            storage_filters=[filter_dto.create("storage.uuid","eq",storage_obj.uuid)]   
-            storage_filtered_prototype=base_prototype.filter(storage_filters)
-            if self.reposity.data[reposity.remnant_key()]!={} and target_datetime>=self.block_datetime:
-                storage_filtered_remnants= base_remnants.filter(storage_filters)
-            datetime_filtered_prototype=storage_filtered_prototype.filter(datetime_filters)
-            for range_obj in list(self.reposity.data[reposity.range_key()].values()):
-                range_filters=[
-                    filter_dto.create("range","eq",range_obj)
-                ]
-                remnant_value=0.0
-                if self.reposity.data[reposity.remnant_key()]!={} and target_datetime>=self.block_datetime:
-                    range_filtered_remnant=storage_filtered_remnants.filter(range_filters).data[0]
-                    remnant_value=range_filtered_remnant.remnant_value
-                unit_obj=range_obj.unit
-                remnant_prototype=prototype_report.filter(datetime_filtered_prototype,range_filters)
-                for transaction_obj in remnant_prototype.data:
-                    unit_name,coef=transaction_obj.unit.get_base()
-                    remnant_value+=transaction_obj.amount*coef
-                    unit_obj=self.reposity.data[reposity.unit_key()][unit_name]
-                remnant_obj=remnant_model.create(range_obj,storage_obj,unit_obj,remnant_value,target_datetime)
-                remnant_obj.name=f"{storage_obj.name}-{range_obj.name}"
-                remnants.append(remnant_obj)
-        return remnants
+        #for storage_obj in self.reposity.data[reposity.storage_key()].values():
+        #    storage_filters=[filter_dto.create("storage.uuid","eq",storage_obj.uuid)]   
+        #    storage_filtered_prototype=base_prototype.filter(storage_filters)
+        #    if self.reposity.data[reposity.remnant_key()]!={} and target_datetime>=self.block_datetime:
+        #        storage_filtered_remnants= base_remnants.filter(storage_filters)
+        #    datetime_filtered_prototype=storage_filtered_prototype.filter(datetime_filters)
+        #    for range_obj in list(self.reposity.data[reposity.range_key()].values()):
+        #        range_filters=[
+        #            filter_dto.create("range","eq",range_obj)
+        #        ]
+        #        remnant_value=0.0
+        #        if self.reposity.data[reposity.remnant_key()]!={} and target_datetime>=self.block_datetime:
+        #            range_filtered_remnant=storage_filtered_remnants.filter(range_filters).data[0]
+        #            remnant_value=range_filtered_remnant.remnant_value
+        #        unit_obj=range_obj.unit
+        #        remnant_prototype=prototype_report.filter(datetime_filtered_prototype,range_filters)
+        #        for transaction_obj in remnant_prototype.data:
+        #            unit_name,coef=transaction_obj.unit.get_base()
+        #            remnant_value+=transaction_obj.amount*coef
+        #            unit_obj=self.reposity.data[reposity.unit_key()][unit_name]
+        #        remnant_obj=remnant_model.create(range_obj,storage_obj,unit_obj,remnant_value,target_datetime)
+        #        remnant_obj.name=f"{storage_obj.name}-{range_obj.name}"
+        #        remnants.append(remnant_obj)
+        #return remnants
 
 
     def save_data_to_config(self,filename):
