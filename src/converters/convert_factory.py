@@ -19,6 +19,7 @@ class convert_factory:
         int:basic_converter,
         float:basic_converter,
         datetime.datetime:datetime_converter,
+        datetime.date:datetime_converter,
         abstract_reference:reference_converter,
         proportion:reference_converter,
         step:reference_converter,
@@ -30,7 +31,7 @@ class convert_factory:
         """
         Function to converting any object to dict
         """
-        if type(obj) in [str,int,float] or obj is None:
+        if type(obj) in [str,int,float,datetime.datetime,datetime.date] or obj is None:
             return self.__converters[type(obj).__bases__[0]].convert(obj)
         elif isinstance(obj,list):
             sub_list=[]

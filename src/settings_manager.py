@@ -5,6 +5,7 @@ from .models.company_model import company_model
 from .models.settings_model import settings_model
 from .models.abstract_reference import *
 from .logics.factory_entities import factory_entities
+import datetime
 class settings_manager:
     """
     Class for work all setting of system. Singletone
@@ -91,6 +92,8 @@ class settings_manager:
                 self.__settings.first_start=data["first_start"]
             else:
                 return False
+            if "block_datetime" in data.keys():
+                self.__settings.block_datetime=datetime.datetime.strptime(data["block_datetime"],"%Y-%m-%dT%H:%M:%S")
             return True
         except Exception as e:
             

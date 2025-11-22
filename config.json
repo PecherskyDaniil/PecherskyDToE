@@ -10,5 +10,6 @@
     "api": {
         "default_response_format": "csv"
     },
-    "first_start": true
+    "first_start": true,
+    "block_datetime": "2024-10-01T12:00:00"
 }

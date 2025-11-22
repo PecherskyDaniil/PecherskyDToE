@@ -69,6 +69,13 @@ class reposity:
         return "transaction_model"
 
     @staticmethod
+    def remnant_key():
+        """
+        Function that returns data key for transactions
+        """
+        return "remnant_model"
+
+    @staticmethod
     def unit_json_key():
         """
         Function that returns json key for units
@@ -107,6 +114,13 @@ class reposity:
         """
         return "transactions"
 
+    @staticmethod
+    def remnant_json_key():
+        """
+        Function that returns data key for transactions
+        """
+        return "remnants"
+    
     def __class_to_json(self,key:str):
         return convert_factory().convert(self.data[key])
     
@@ -121,4 +135,5 @@ class reposity:
         data[reposity.range_group_json_key()]=self.__class_to_json(reposity.range_group_key())
         data[reposity.storage_json_key()]=self.__class_to_json(reposity.storage_key())
         data[reposity.transcation_json_key()]=self.__class_to_json(reposity.transaction_key())
+        data[reposity.remnant_json_key()]=self.__class_to_json(reposity.remnant_key())
         return data

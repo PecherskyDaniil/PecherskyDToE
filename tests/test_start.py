@@ -1,6 +1,6 @@
 import pytest
 import json
-
+import time
 from src.reposity import *
 from src.start_service import *
 
@@ -8,7 +8,8 @@ from src.start_service import *
 def start_service_instance():
     """Default start_service instance in fixture"""
     s_s=start_service()
-    s_s.start()
+    s_s.block_datetime=datetime.datetime.strptime("2024-10-01T12:00:00","%Y-%m-%dT%H:%M:%S")
+    s_s.start(False)
     return s_s
 
 class TestStart:
@@ -349,6 +350,9 @@ class TestStart:
             s_s.load("")
     
     def test_valid_create_balance_sheet(self):
+        """
+        Test valid create of balance_sheet
+        """
         s_s=start_service()
         s_s.start(True)
         start_datetime_filters=[
@@ -384,4 +388,76 @@ class TestStart:
         line1=result[0]
         assert line1["end_balance"]==line1["start_balance"]-line1["out"]+line1["in"]
 
+
+    def test_valid_date_of_block(self):
+        """
+        Test valid create of block_datetime
+        """
+        start_datetime_filters=[
+            filter_dto.create("datetime","lt",datetime.datetime(2024,11,1,12,0,0,0))
+        ]
+        main_datetime_filters=[
+            filter_dto.create("datetime","gt",datetime.datetime(2024,11,1,12,0,0,0)),
+            filter_dto.create("datetime","lt",datetime.datetime(2024,12,1,12,0,0,0))
+        ]
+        storage_filters=[
+            filter_dto.create("storage.name","eq","Storage A")
+        ]
+        s_s=start_service()
+        s_s.block_datetime=datetime.datetime(2024,10,1,12,0,0,0)
+        s_s.start()
+        #assert list(s_s.reposity.data[reposity.remnant_key()].values())[0].remnant_value==0
+        balance_sheet1=s_s.create_balance_sheet_with_remnants(start_datetime_filters,main_datetime_filters,storage_filters,[])
+        s_s.block_datetime=datetime.datetime(2024,6,1,12,0,0,0)
+        s_s.create_block_remnant()
+        #assert list(s_s.reposity.data[reposity.remnant_key()].values())[0].remnant_value==0
+        balance_sheet2=s_s.create_balance_sheet_with_remnants(start_datetime_filters,main_datetime_filters,storage_filters,[])
+        balance_sheet3=s_s.create_balance_sheet(start_datetime_filters,main_datetime_filters,storage_filters,[])
+        assert balance_sheet1==balance_sheet3
+        assert balance_sheet1==balance_sheet2
+
+
+    def test_valid_create_remnant(self):
+        """
+        Test valid create of remnants
+        """
+        s_s=start_service()
+        s_s.block_datetime=datetime.datetime(2024,10,1,12,0,0,0)
+        s_s.start()
+        remnants=s_s.create_remnant(datetime.datetime(2024,11,2,12,0,0,0))
+        assert remnants[0].remnant_value==765.0
+        s_s.reposity.data[reposity.remnant_key()]={}
+        remnants=s_s.create_remnant(datetime.datetime(2024,11,2,12,0,0,0))
+        assert remnants[0].remnant_value==765.0
+    
+    def test_time_of_query_with_remnants(self):
+        """
+        Нагрузочное тестирование остатков
+        """
+        start_datetime_filters=[
+            filter_dto.create("datetime","lt",datetime.datetime(2024,11,1,12,0,0,0))
+        ]
+        main_datetime_filters=[
+            filter_dto.create("datetime","gt",datetime.datetime(2024,11,1,12,0,0,0)),
+            filter_dto.create("datetime","lt",datetime.datetime(2024,12,1,12,0,0,0))
+        ]
+        storage_filters=[
+            filter_dto.create("storage.name","eq","Storage A")
+        ]
+        s_s=start_service()
+        s_s.block_datetime=datetime.datetime(2024,10,1,12,0,0,0)
+        s_s.start()
+        t0=time.time()
+        balance_sheet1=s_s.create_balance_sheet_with_remnants(start_datetime_filters,main_datetime_filters,storage_filters,[])
+        t1=time.time()
+        balance_sheet2=s_s.create_balance_sheet(start_datetime_filters,main_datetime_filters,storage_filters,[])
+        t2=time.time()
+
+
+        assert t1-t0<t2-t1
+        assert balance_sheet1==balance_sheet2
+
+        with open("./remnants_test_results.txt","w") as f:
+            f.write(f"Time with remnants: {t1-t0}\n")
+            f.write(f"Time without remnants: {t2-t1}\n")
 

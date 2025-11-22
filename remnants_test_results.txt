@@ -1,0 +1,2 @@
+Time with remnants: 0.39581871032714844
+Time without remnants: 0.8585278987884521
