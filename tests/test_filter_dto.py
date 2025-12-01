@@ -1,5 +1,5 @@
 import pytest
-from src.models.abstract_reference import argument_exception
+from src.core.abstract_reference import argument_exception
 from src.dto.filter_dto import filter_dto
 from src.models.unit_model import unit_model
 class TestFilterDto:

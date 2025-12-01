@@ -1,4 +1,4 @@
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from .company_model import company_model
 from ..logics.abstract_response import abstract_response
 import datetime

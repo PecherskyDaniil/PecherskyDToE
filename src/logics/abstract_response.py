@@ -1,5 +1,5 @@
 from abc import ABC,abstractmethod
-from ..models.abstract_reference import model_validator,operation_exception,argument_exception,abstract_reference
+from ..core.abstract_reference import model_validator,operation_exception,argument_exception,abstract_reference
 from ..converters.convert_factory import convert_factory
 class abstract_response(ABC):
     """

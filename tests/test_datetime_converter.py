@@ -1,6 +1,6 @@
 import pytest
 import datetime
-from src.models.abstract_reference import argument_exception
+from src.core.abstract_reference import argument_exception
 from src.converters.datetime_converter import datetime_converter
 class SampleObject:
     """

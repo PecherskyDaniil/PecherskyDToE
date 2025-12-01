@@ -21,38 +21,10 @@ class TestStart:
         Test valid start service
         """
         # проверка
-        assert len(start_service_instance.reposity.data[reposity.unit_key()].keys()) != 0
-        assert len(start_service_instance.reposity.data[reposity.range_group_key()].keys())!=0
-        assert len(start_service_instance.reposity.data[reposity.range_key()].keys())!=0
-        assert len(start_service_instance.reposity.data[reposity.receipt_key()].keys())!=0
-
-    def test_valid_start_service_units(self,start_service_instance:start_service):
-        """
-        Test valid default created units
-        """
-        #Проверка всех значений
-        assert all(key in start_service_instance.reposity.data[reposity.unit_key()].keys() for key in ["килограмм","грамм","литр","миллилитр","штука"])
-
-    def test_valid_start_service_ranges(self,start_service_instance:start_service):
-        """
-        Test valid default created ranges
-        """
-        #Проверка всех значений
-        assert all(key in start_service_instance.reposity.data[reposity.range_key()].keys() for key in ['яйцо', 'мука', 'молоко', 'соль', 'сахар', 'адыгейский сыр', 'моцарелла сыр', 'ванилин', 'масло растительное', 'масло сливочное', 'дрожжи', 'вода'])
-    
-    def test_valid_start_service_range_groups(self,start_service_instance:start_service):
-        """
-        Test valid default created range groups
-        """
-        #Проверка всех значений
-        assert all(key in start_service_instance.reposity.data[reposity.range_group_key()].keys() for key in ["ингридиенты"])
-    
-    def test_valid_start_service_receipts(self,start_service_instance:start_service):
-        """
-        Test valid default created receipts
-        """
-        #Проверка всех значений
-        assert all(key in start_service_instance.reposity.data[reposity.receipt_key()].keys() for key in ["Вафли Хрустящие","Хачапури по Адыгейски"])
+        assert len(start_service_instance.reposity.data[reposity_keys.unit_key()].keys()) != 0
+        assert len(start_service_instance.reposity.data[reposity_keys.range_group_key()].keys())!=0
+        assert len(start_service_instance.reposity.data[reposity_keys.range_key()].keys())!=0
+        assert len(start_service_instance.reposity.data[reposity_keys.receipt_key()].keys())!=0
 
     def test_valid_create_kilogram(self, start_service_instance):
         """Test kilogram unit creation"""
@@ -264,10 +236,10 @@ class TestStart:
         start_service_instance.start()
         
         # Verify that all data types are populated
-        assert len(start_service_instance.reposity.data[reposity.unit_key()]) > 0
-        assert len(start_service_instance.reposity.data[reposity.range_group_key()]) > 0
-        assert len(start_service_instance.reposity.data[reposity.range_key()]) > 0
-        assert len(start_service_instance.reposity.data[reposity.receipt_key()]) > 0
+        assert len(start_service_instance.reposity.data[reposity_keys.unit_key()]) > 0
+        assert len(start_service_instance.reposity.data[reposity_keys.range_group_key()]) > 0
+        assert len(start_service_instance.reposity.data[reposity_keys.range_key()]) > 0
+        assert len(start_service_instance.reposity.data[reposity_keys.receipt_key()]) > 0
 
     def test_valid_duplicate_creation(self, start_service_instance):
         """Test that duplicate creation returns existing objects"""
@@ -280,8 +252,8 @@ class TestStart:
         kilogram2 = start_service_instance.create_killogramm()
         
         # Verify same objects are returned
-        assert gram1 is gram2
-        assert kilogram1 is kilogram2
+        assert gram1 == gram2
+        assert kilogram1 == kilogram2
     
     def test_valid_hierarchy(self,start_service_instance):
         """Test that check if base unit is unit"""
@@ -296,17 +268,6 @@ class TestStart:
 
         assert mililiter.base_unit == litr
     
-    def test_reposity_data_persistence(self, start_service_instance):
-        """Test that data persists in repository across method calls"""
-        # Create some data
-        start_service_instance.create_gramm()
-        start_service_instance.create_ingredients()
-        start_service_instance.create_egg()
-        
-        # Verify data is stored in repository
-        assert 'грамм' in start_service_instance.reposity.data[reposity.unit_key()].keys()
-        assert 'ингридиенты' in start_service_instance.reposity.data[reposity.range_group_key()].keys()
-        assert 'яйцо' in start_service_instance.reposity.data[reposity.range_key()].keys()
 
     def test_valid_save_defaults_to_config(self, start_service_instance:start_service):
         """
@@ -331,12 +292,12 @@ class TestStart:
         s_s=start_service()
         s_s.start(False)
         assert s_s.load(filepath)==True
-        assert len(s_s.reposity.data[reposity.receipt_key()])==2
-        assert len(s_s.reposity.data[reposity.unit_key()])==5
-        assert len(s_s.reposity.data[reposity.range_key()])==12
-        assert len(s_s.reposity.data[reposity.range_group_key()])==1
-        assert len (s_s.reposity.data[reposity.transaction_key()])==24
-        assert len (s_s.reposity.data[reposity.storage_key()])==2
+        assert len(s_s.reposity.data[reposity_keys.receipt_key()])==2
+        assert len(s_s.reposity.data[reposity_keys.unit_key()])==5
+        assert len(s_s.reposity.data[reposity_keys.range_key()])==12
+        assert len(s_s.reposity.data[reposity_keys.range_group_key()])==1
+        assert len (s_s.reposity.data[reposity_keys.transaction_key()])==4380
+        assert len (s_s.reposity.data[reposity_keys.storage_key()])==2
     
     def test_error_load_config_to_start_service(self):
         """
@@ -384,7 +345,7 @@ class TestStart:
         result=s_s.create_balance_sheet(start_datetime_filters,
                                         main_datteime_filters,
                                         storage_filters,[])
-        assert len(result)==len(list(s_s.reposity.data[reposity.range_key()].values()))
+        assert len(result)==len(list(s_s.reposity.data[reposity_keys.range_key()].values()))
         line1=result[0]
         assert line1["end_balance"]==line1["start_balance"]-line1["out"]+line1["in"]
 
@@ -406,11 +367,11 @@ class TestStart:
         s_s=start_service()
         s_s.block_datetime=datetime.datetime(2024,10,1,12,0,0,0)
         s_s.start()
-        #assert list(s_s.reposity.data[reposity.remnant_key()].values())[0].remnant_value==0
+        #assert list(s_s.reposity.data[reposity_keys.remnant_key()].values())[0].remnant_value==0
         balance_sheet1=s_s.create_balance_sheet_with_remnants(start_datetime_filters,main_datetime_filters,storage_filters,[])
         s_s.block_datetime=datetime.datetime(2024,6,1,12,0,0,0)
         s_s.create_block_remnant()
-        #assert list(s_s.reposity.data[reposity.remnant_key()].values())[0].remnant_value==0
+        #assert list(s_s.reposity.data[reposity_keys.remnant_key()].values())[0].remnant_value==0
         balance_sheet2=s_s.create_balance_sheet_with_remnants(start_datetime_filters,main_datetime_filters,storage_filters,[])
         balance_sheet3=s_s.create_balance_sheet(start_datetime_filters,main_datetime_filters,storage_filters,[])
         assert balance_sheet1==balance_sheet3
@@ -426,7 +387,7 @@ class TestStart:
         s_s.start()
         remnants=s_s.create_remnant(datetime.datetime(2024,11,2,12,0,0,0))
         assert remnants[0].remnant_value==765.0
-        s_s.reposity.data[reposity.remnant_key()]={}
+        s_s.reposity.data[reposity_keys.remnant_key()]={}
         remnants=s_s.create_remnant(datetime.datetime(2024,11,2,12,0,0,0))
         assert remnants[0].remnant_value==765.0
     

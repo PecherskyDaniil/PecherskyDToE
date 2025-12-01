@@ -1,11 +1,11 @@
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from ..dto.step_dto import step_dto
 from ..models.range_model import range_model
 from ..models.unit_model import unit_model
 from ..models.storage_model import storage_model
 from ..dto.remnant_dto import remnant_dto
 import datetime
-
+from ..core.reposity_keys import reposity_keys
 class remnant_model(abstract_reference):
     """
     Class that contain data remnant
@@ -117,9 +117,9 @@ class remnant_model(abstract_reference):
         """
         model_validator.validate(remnant_dto_obj, remnant_dto)
         model_validator.validate(cache, dict)
-        unit_obj =  cache[ remnant_dto_obj.unit_id ] if remnant_dto_obj.unit_id in cache else None
-        range_obj= cache[ remnant_dto_obj.range_id ] if remnant_dto_obj.range_id in cache else None
-        storage_obj= cache[ remnant_dto_obj.storage_id ] if remnant_dto_obj.storage_id in cache else None
+        unit_obj =  cache[reposity_keys.unit_key()][ remnant_dto_obj.unit_id ] if remnant_dto_obj.unit_id in cache[reposity_keys.unit_key()] else None
+        range_obj= cache[reposity_keys.range_key()][ remnant_dto_obj.range_id ] if remnant_dto_obj.range_id in cache[reposity_keys.range_key()] else None
+        storage_obj= cache[reposity_keys.storage_key()][ remnant_dto_obj.storage_id ] if remnant_dto_obj.storage_id in cache[reposity_keys.storage_key()] else None
         remnant_model_obj=remnant_model.create(range_obj,storage_obj,unit_obj,remnant_dto_obj.remnant_value,remnant_dto_obj.datetime)
         return remnant_model_obj
 

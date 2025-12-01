@@ -1,6 +1,6 @@
 import abc
 from ..core.common import common
-from ..models.abstract_reference import model_validator,argument_exception, operation_exception
+from ..core.abstract_reference import model_validator,argument_exception, operation_exception
 
 class abstract_dto:
     """

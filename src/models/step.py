@@ -1,4 +1,4 @@
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from ..dto.step_dto import step_dto
 
 class step():

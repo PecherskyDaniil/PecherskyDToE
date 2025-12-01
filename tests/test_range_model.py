@@ -1,11 +1,13 @@
 import pytest
 import json
 
-from src.models.abstract_reference import *
+from src.core.abstract_reference import *
 from src.models.range_group_model import range_group_model
 from src.models.range_model import range_model
 from src.models.unit_model import unit_model
 from src.dto.range_dto import range_dto
+from src.reposity import reposity
+from src.core.reposity_keys import reposity_keys
 class TestRangeModel:
     """
     Tests of range_model
@@ -94,8 +96,8 @@ class TestRangeModel:
         """
         #Подготовка
         cache={
-            "123":unit_model("gramm",None,1.0),
-            "234":range_group_model("products")
+            reposity_keys.unit_key():{"123":unit_model("gramm",None,1.0)},
+            reposity_keys.range_group_key():{"234":range_group_model("products")}
         }
         #Создание
         range_dto_obj=range_dto()
@@ -109,8 +111,8 @@ class TestRangeModel:
         #Проверка
         assert range_obj.name=="Cheese"
         assert range_obj.full_name=="Mega Cheese"
-        assert range_obj.group is cache["234"]
-        assert range_obj.unit is cache["123"]
+        assert range_obj.group is cache[reposity_keys.range_group_key()]["234"]
+        assert range_obj.unit is cache[reposity_keys.unit_key()]["123"]
     
     def test_valid_convert_to_dto_range_group(self):
         """

@@ -7,7 +7,8 @@ from src.models.storage_model import storage_model
 from src.dto.remnant_dto import remnant_dto
 from src.models.remnant_model import remnant_model
 from src.models.range_group_model import range_group_model
-
+from src.reposity import reposity
+from src.core.reposity_keys import reposity_keys
 class TestRemnantModel:
     """Тесты для класса remnant_model"""
 
@@ -141,9 +142,9 @@ class TestRemnantModel:
         remnant_dto_obj.datetime = datetime.datetime(2023, 10, 16, 10, 0, 0)
         
         cache = {
-            "unit-uuid-123": sample_unit,
-            "range-uuid-123": sample_range,
-            "storage-uuid-123": sample_storage
+            reposity_keys.unit_key():{"unit-uuid-123": sample_unit},
+            reposity_keys.range_key():{"range-uuid-123": sample_range},
+            reposity_keys.storage_key():{"storage-uuid-123": sample_storage}
         }
         
         # Act
@@ -166,7 +167,9 @@ class TestRemnantModel:
         remnant_dto_obj.remnant_value = 100.0
         remnant_dto_obj.datetime = datetime.datetime(2023, 10, 16, 10, 0, 0)
         
-        cache = {}  # Пустой кэш
+        cache = {reposity_keys.unit_key():{},
+            reposity_keys.range_key():{},
+            reposity_keys.storage_key():{}}  # Пустой кэш
         
         # Act
         result = remnant_model.from_dto(remnant_dto_obj, cache)

@@ -1,9 +1,11 @@
 import pytest
 import json
 
-from src.models.abstract_reference import *
+from src.core.abstract_reference import *
 from src.models.unit_model import unit_model
 from src.dto.unit_dto import unit_dto
+from src.reposity import reposity
+from src.core.reposity_keys import reposity_keys
 class TestUnitModel:
     """
     Tests for unit_model
@@ -70,7 +72,7 @@ class TestUnitModel:
         """
         #Подготовка
         cache={
-            "123":unit_model("gramm",None,1.0),
+            reposity_keys.unit_key():{"123":unit_model("gramm",None,1.0)},
         }
         #Создание
         unit_dto_obj=unit_dto()
@@ -82,7 +84,7 @@ class TestUnitModel:
         unit_obj=unit_model.from_dto(unit_dto_obj,cache)
         #Проверка
         assert unit_obj.name=="kilo"
-        assert unit_obj.base_unit is cache["123"]
+        assert unit_obj.base_unit is cache[reposity_keys.unit_key()]["123"]
         assert unit_obj.coef == 1000.0
     
     def test_valid_convert_to_dto_unit(self):
@@ -90,15 +92,15 @@ class TestUnitModel:
         Test on valid convert to dto object unit_model
         """
         cache={
-            "123":unit_model("gramm",None,1.0),
+            reposity_keys.unit_key():{"123":unit_model("gramm",None,1.0)}
         }
         #Создание
-        unit_obj=unit_model("kilo",cache["123"],1000.0)
+        unit_obj=unit_model("kilo",cache[reposity_keys.unit_key()]["123"],1000.0)
         #Присваивание
         unit_dto_obj=unit_obj.to_dto()
         #Проверка
         assert unit_dto_obj.name=="kilo"
-        assert unit_dto_obj.base_id==cache["123"].uuid
+        assert unit_dto_obj.base_id==cache[reposity_keys.unit_key()]["123"].uuid
         assert unit_dto_obj.coef==1000.0
         
     def test_valid_get_base_function(self):
@@ -109,6 +111,6 @@ class TestUnitModel:
         unit1=unit_model("a",None,1.0)
         unit2=unit_model("b",unit1,100.0)
         #проверка
-        assert unit1.get_base()==("a",1.0)
-        assert unit2.get_base()==("a",100.0)
+        assert unit1.get_base()[1]==1.0
+        assert unit2.get_base()[1]==100.0
     

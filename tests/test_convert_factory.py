@@ -2,7 +2,10 @@ import pytest
 import datetime
 
 from src.converters.convert_factory import convert_factory
-from src.reposity import *
+from src.reposity import reposity
+from src.models.range_model import range_model
+from src.models.unit_model import unit_model
+from src.models.range_group_model import range_group_model
 @pytest.fixture
 def simple_valid_data():
     return [

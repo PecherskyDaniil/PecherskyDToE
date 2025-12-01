@@ -1,7 +1,7 @@
-from ..models.abstract_reference import model_validator
+from .abstract_reference import model_validator
 from ..dto.filter_dto import filter_dto
 from abc import ABC,abstractmethod
-class prototype():
+class prototype:
     """
     Class for prototype
     """

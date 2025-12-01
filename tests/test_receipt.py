@@ -173,11 +173,13 @@ class TestReceiptModel:
         """
         #Подготовка
         cache={
-            "123":unit_model("gramm",None,1.0),
-            "234":range_group_model("products"),
+            reposity_keys.unit_key():{"123":unit_model("gramm",None,1.0)},
+            reposity_keys.range_group_key():{"234":range_group_model("products")},
+            reposity_keys.range_key():{},
         }
-        cache["345"]=range_model("sugar","sweet sugar",cache["123"],cache["234"])
-        cache["456"]=range_model("salt","salty salt",cache["123"],cache["234"])
+        cache[reposity_keys.range_key()]["345"]=range_model("sugar","sweet sugar",cache[reposity_keys.unit_key()]["123"],cache[reposity_keys.range_group_key()]["234"])
+        cache[reposity_keys.range_key()]["456"]=range_model("salt","salty salt",cache[reposity_keys.unit_key()]["123"],cache[reposity_keys.range_group_key()]["234"])
+        
         #Создание
         receipt_dto_obj=receipt_dto()
         receipt_dto_obj.name="type_receipt"

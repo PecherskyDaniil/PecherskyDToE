@@ -1,5 +1,5 @@
 from .abstract_converter import abstract_converter
-from ..models.abstract_reference import argument_exception
+from ..core.abstract_reference import argument_exception
 import datetime
 class datetime_converter(abstract_converter):
     """

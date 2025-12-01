@@ -1,4 +1,4 @@
-from ..models.abstract_reference import *
+from .abstract_reference import *
 
 class common:
     """

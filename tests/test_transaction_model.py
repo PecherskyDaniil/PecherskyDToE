@@ -7,6 +7,8 @@ from src.models.unit_model import unit_model
 from src.models.transaction_model import transaction_model
 from src.dto.transaction_dto import transaction_dto
 from datetime import datetime
+from src.reposity import reposity
+from src.core.reposity_keys import reposity_keys
 class TestTransactionModel:
 
     
@@ -42,12 +44,13 @@ class TestTransactionModel:
         """
         #Подготовка
         cache={
-            "123":unit_model("gramm",None,1.0),
-            "234":range_group_model("products"),
-            "555":storage_model("storage A")
+            reposity_keys.unit_key():{"123":unit_model("gramm",None,1.0)},
+            reposity_keys.range_group_key():{"234":range_group_model("products")},
+            reposity_keys.storage_key():{"555":storage_model("storage A")},
+            reposity_keys.range_key():{},
         }
-        cache["345"]=range_model("sugar","sweet sugar",cache["123"],cache["234"])
-        cache["456"]=range_model("salt","salty salt",cache["123"],cache["234"])
+        cache[reposity_keys.range_key()]["345"]=range_model("sugar","sweet sugar",cache[reposity_keys.unit_key()]["123"],cache[reposity_keys.range_group_key()]["234"])
+        cache[reposity_keys.range_key()]["456"]=range_model("salt","salty salt",cache[reposity_keys.unit_key()]["123"],cache[reposity_keys.range_group_key()]["234"])
         #Создание
         transaction_dto_obj=transaction_dto()
         transaction_dto_obj.name="AAA"
@@ -63,9 +66,9 @@ class TestTransactionModel:
         #Проверка
         assert transaction_obj.uuid=="333"
         assert transaction_obj.name=="AAA"
-        assert transaction_obj.range==cache["345"]
-        assert transaction_obj.unit==cache["123"]
-        assert transaction_obj.storage==cache["555"]
+        assert transaction_obj.range==cache[reposity_keys.range_key()]["345"]
+        assert transaction_obj.unit==cache[reposity_keys.unit_key()]["123"]
+        assert transaction_obj.storage==cache[reposity_keys.storage_key()]["555"]
         assert transaction_obj.amount==10.0
         assert transaction_obj.datetime==datetime(2025,12,31,12,0,0,0)
     
@@ -75,27 +78,28 @@ class TestTransactionModel:
         """
         #Подготовка
         cache={
-            "123":unit_model("gramm",None,1.0),
-            "234":range_group_model("products"),
-            "555":storage_model("storage A")
+            reposity_keys.unit_key():{"123":unit_model("gramm",None,1.0)},
+            reposity_keys.range_group_key():{"234":range_group_model("products")},
+            reposity_keys.storage_key():{"555":storage_model("storage A")},
+            reposity_keys.range_key():{},
         }
-        cache["345"]=range_model("sugar","sweet sugar",cache["123"],cache["234"])
-        cache["456"]=range_model("salt","salty salt",cache["123"],cache["234"])
+        cache[reposity_keys.range_key()]["345"]=range_model("sugar","sweet sugar",cache[reposity_keys.unit_key()]["123"],cache[reposity_keys.range_group_key()]["234"])
+        cache[reposity_keys.range_key()]["456"]=range_model("salt","salty salt",cache[reposity_keys.unit_key()]["123"],cache[reposity_keys.range_group_key()]["234"])
         #Создание
         transaction_obj=transaction_model()     
         transaction_obj.name="AAA"
         transaction_obj.datetime=datetime(2025,12,31,12,0,0,0)
-        transaction_obj.range=cache["345"]
-        transaction_obj.storage=cache["555"]
+        transaction_obj.range=cache[reposity_keys.range_key()]["345"]
+        transaction_obj.storage=cache[reposity_keys.storage_key()]["555"]
         transaction_obj.amount=10.0
-        transaction_obj.unit=cache["123"]
+        transaction_obj.unit=cache[reposity_keys.unit_key()]["123"]
         #Присваивание
         transaction_dto_obj=transaction_obj.to_dto()
         #Проверка
         assert transaction_dto_obj.name=="AAA"
-        assert transaction_dto_obj.unit_id==cache["123"].uuid
-        assert transaction_dto_obj.range_id == cache["345"].uuid
-        assert transaction_dto_obj.storage_id == cache["555"].uuid
+        assert transaction_dto_obj.unit_id==cache[reposity_keys.unit_key()]["123"].uuid
+        assert transaction_dto_obj.range_id == cache[reposity_keys.range_key()]["345"].uuid
+        assert transaction_dto_obj.storage_id == cache[reposity_keys.storage_key()]["555"].uuid
         assert transaction_dto_obj.amount == 10.0
         assert transaction_dto_obj.datetime == "2025-12-31 12:00:00"
 

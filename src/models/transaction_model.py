@@ -1,10 +1,11 @@
 
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from datetime import datetime
 from .range_model import range_model
 from .storage_model import storage_model
 from .unit_model import unit_model
 from ..dto.transaction_dto import transaction_dto
+from ..core.reposity_keys import reposity_keys
 class transaction_model(abstract_reference):
     """
     Class for work with transactions. Inherited from abstract_reference
@@ -131,10 +132,10 @@ class transaction_model(abstract_reference):
         item=transaction_model()
         item.name=dto.name
         item.uuid=dto.uuid
-        item.range=cache[ dto.range_id ] if dto.range_id in cache else None
-        item.storage=cache[ dto.storage_id ] if dto.storage_id in cache else None
+        item.range=cache[reposity_keys.range_key()][ dto.range_id ] if dto.range_id in cache[reposity_keys.range_key()] else None
+        item.storage=cache[reposity_keys.storage_key()][ dto.storage_id ] if dto.storage_id in cache[reposity_keys.storage_key()] else None
         item.amount=dto.amount
-        item.unit=cache[ dto.unit_id ] if dto.unit_id in cache else None
+        item.unit=cache[reposity_keys.unit_key()][ dto.unit_id ] if dto.unit_id in cache[reposity_keys.unit_key()]  else None
         item.datetime=datetime.strptime(dto.datetime,"%Y-%m-%d %H:%M:%S")
         return item
 

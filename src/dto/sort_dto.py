@@ -1,4 +1,4 @@
-from ..models.abstract_reference import Operator,model_validator
+from ..core.abstract_reference import Operator,model_validator
 from ..core.common import common
 
 

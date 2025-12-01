@@ -1,6 +1,6 @@
 from .abstract_response import abstract_response
 from ..core.common import common
-from ..models.abstract_reference import abstract_reference
+from ..core.abstract_reference import abstract_reference
 
 class response_csv(abstract_response):
     """

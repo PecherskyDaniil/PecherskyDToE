@@ -1,5 +1,6 @@
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from ..dto.unit_dto import unit_dto
+from ..core.reposity_keys import reposity_keys
 class unit_model(abstract_reference):
     """
     Class for work with unit. Inherited from abstract_reference
@@ -70,7 +71,7 @@ class unit_model(abstract_reference):
 
     def get_base(self)->tuple:
         if self.base_unit is None:
-            return (self.name,self.coef)
+            return (self.uuid,self.coef)
         else:
             base=self.base_unit.get_base()
             return (base[0],self.coef*base[1])
@@ -93,7 +94,7 @@ class unit_model(abstract_reference):
         """
         model_validator.validate(dto, unit_dto)
         model_validator.validate(cache, dict)
-        base_unit =  cache[ dto.base_id ] if dto.base_id in cache else None
+        base_unit =  cache[reposity_keys.unit_key()][ dto.base_id ] if dto.base_id in cache[reposity_keys.unit_key()] else None
         item  = unit_model.create(dto.name, base_unit, dto.coef)
         item.uuid=dto.uuid
         return item

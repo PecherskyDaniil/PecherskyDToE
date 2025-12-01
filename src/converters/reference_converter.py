@@ -1,8 +1,8 @@
 from .abstract_converter import abstract_converter
-from ..models.abstract_reference import abstract_reference
+from ..core.abstract_reference import abstract_reference
 from ..models.proportion import proportion
 from ..models.step import step
-from ..models.abstract_reference import argument_exception
+from ..core.abstract_reference import argument_exception
 class reference_converter(abstract_converter):
     """
     Class for converting reference data to dict

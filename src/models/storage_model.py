@@ -1,5 +1,5 @@
 
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from ..dto.storage_dto import storage_dto
 class storage_model(abstract_reference):
     """

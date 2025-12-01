@@ -2,12 +2,12 @@
 from .basic_converter import basic_converter
 from .datetime_converter import datetime_converter
 from .reference_converter import reference_converter
-from ..models.abstract_reference import abstract_reference
+from ..core.abstract_reference import abstract_reference
 from ..models.proportion import proportion
 from ..dto.abstract_dto import abstract_dto
 from ..models.step import step
 from ..core.common import common
-from ..models.abstract_reference import argument_exception
+from ..core.abstract_reference import argument_exception
 import datetime
 class convert_factory:
     """

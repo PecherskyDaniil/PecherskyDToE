@@ -5,6 +5,9 @@ from src.logics.response_xml import *
 
 from src.reposity import *
 from src.start_service import start_service
+from src.models.range_model import range_model
+from src.models.unit_model import unit_model
+from src.models.range_group_model import range_group_model
 @pytest.fixture
 def valid_data_of_factory():
     """
@@ -40,7 +43,7 @@ class TestResponceXML:
         Test on valid create of reponce_xml
         """
         #Создание
-        data=list(valid_data_of_factory[reposity.receipt_key()].values())
+        data=list(valid_data_of_factory[reposity_keys.receipt_key()].values())
         xml=response_xml().create(data)
         #Проверка
         assert xml!=""

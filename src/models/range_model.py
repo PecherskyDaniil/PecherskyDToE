@@ -1,8 +1,9 @@
 
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from .unit_model import unit_model
 from .range_group_model import range_group_model
 from ..dto.range_dto import range_dto
+from ..core.reposity_keys import reposity_keys
 class range_model(abstract_reference):
     """
     Class for work with range. Inherited from abstract_reference
@@ -104,8 +105,8 @@ class range_model(abstract_reference):
         """
         model_validator.validate(dto, range_dto)
         model_validator.validate(cache, dict)
-        unit =  cache[ dto.unit_id ] if dto.unit_id in cache else None
-        group= cache[ dto.group_id ] if dto.group_id in cache else None
+        unit =  cache[reposity_keys.unit_key()][ dto.unit_id ] if dto.unit_id in cache[reposity_keys.unit_key()] else None
+        group= cache[reposity_keys.range_group_key()][ dto.group_id ] if dto.group_id in cache[reposity_keys.range_group_key()] else None
         item  = range_model.create(dto.name,dto.full_name,unit,group)
         item.uuid=dto.uuid
         return item

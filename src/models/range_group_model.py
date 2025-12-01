@@ -1,4 +1,4 @@
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from ..dto.range_group_dto import range_group_dto
 class range_group_model(abstract_reference):
     """

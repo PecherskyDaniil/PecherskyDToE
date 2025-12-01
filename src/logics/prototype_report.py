@@ -2,7 +2,7 @@
 from ..core.prototype import prototype
 from ..models.range_model import range_model
 from ..models.storage_model import storage_model
-from ..models.abstract_reference import model_validator
+from ..core.abstract_reference import model_validator
 import datetime
 from ..dto.filter_dto import filter_dto
 class prototype_report(prototype):

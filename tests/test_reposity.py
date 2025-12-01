@@ -7,7 +7,7 @@ class TestReposity:
     def test_valid_reposity_to_json(self):
         s_s=start_service()
         s_s.start()
-        data=s_s.reposity.to_json()
+        data=s_s.reposity_to_json()
         assert "receipts" in data.keys()
         assert "units" in data.keys()
         assert "ranges" in data.keys()

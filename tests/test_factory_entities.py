@@ -6,7 +6,7 @@ from src.logics.response_csv import response_csv
 from src.logics.response_json import response_json
 from src.logics.response_xml import response_xml
 from src.logics.response_markdown import response_markdown
-from src.models.abstract_reference import argument_exception,operation_exception
+from src.core.abstract_reference import argument_exception,operation_exception
 class TestFactoryEntities:
     """
     Tests for factory_entities

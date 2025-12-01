@@ -11,7 +11,21 @@ from src.reposity import reposity
 from src.logics.response_formats import response_formats
 from src.models.transaction_model import transaction_model
 from src.dto.filter_dto import filter_dto
+from src.dto.storage_dto import storage_dto
+from src.dto.range_dto import range_dto
+from src.dto.range_group_dto import range_group_dto
+from src.dto.transaction_dto import transaction_dto
+from src.dto.receipt_dto import receipt_dto
+from src.dto.unit_dto import unit_dto
 from src.core.prototype import prototype
+from src.models.range_group_model import range_group_model
+from src.models.range_model import range_model
+from src.models.receipt_model import receipt_model
+from src.models.storage_model import storage_model
+from src.models.transaction_model import transaction_model
+from src.models.unit_model import unit_model
+from src.core.reposity_keys import reposity_keys
+from src.logics.reference_service import reference_service
 import datetime
 import json
 app = connexion.FlaskApp(__name__)
@@ -25,6 +39,26 @@ if not(load_result):
 start_service_instance=start_service()
 start_service_instance.block_datetime=settings_manager_instance.settings.block_datetime
 start_service_instance.start(settings_manager_instance.settings.first_start)
+#start_service_instance.save_data_to_config("default_data.json")
+
+
+dto_maps={
+    reposity_keys.unit_key():unit_dto,
+    reposity_keys.range_key():range_dto,
+    reposity_keys.range_group_key():range_group_dto,
+    reposity_keys.storage_key():storage_dto,
+    reposity_keys.receipt_key():receipt_dto,
+    reposity_keys.transaction_key():transaction_dto
+}
+
+model_maps={
+    reposity_keys.unit_key():unit_model,
+    reposity_keys.range_key():range_model,
+    reposity_keys.range_group_key():range_group_model,
+    reposity_keys.storage_key():storage_model,
+    reposity_keys.receipt_key():receipt_model,
+    reposity_keys.transaction_key():transaction_model
+}
 @app.route("/api/accessibility", methods=['GET'])
 def formats():
     """
@@ -175,9 +209,9 @@ def get_balance_sheet():
         filter_dto.create("datetime","lt",end_datetime),
         filter_dto.create("datetime","gt",start_datetime)
     ]
-    storage_obj=start_service_instance.reposity.data[reposity.storage_key()][storage_name]
+    #storage_obj=start_service_instance.reposity.data[reposity_keys.storage_key()][storage_name]
     storage_filters=[
-        filter_dto.create("storage","eq",storage_obj)
+        filter_dto.create("storage.name","eq",storage_name)
     ]
     balance_sheet=start_service_instance.create_balance_sheet_with_remnants(start_balance_datetime_filters,main_balance_datetime_filters,storage_filters)
     result_format=factory_entity.create("csv")()

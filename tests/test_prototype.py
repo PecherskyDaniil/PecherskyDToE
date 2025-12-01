@@ -7,6 +7,7 @@ from src.start_service import start_service
 from src.reposity import reposity
 import datetime
 from src.dto.filter_dto import filter_dto
+from src.core.reposity_keys import reposity_keys
 class TestPrototype:
     """
     Test for class prototype
@@ -27,9 +28,9 @@ class TestPrototype:
         """
         start_service_instance=start_service()
         start_service_instance.start(True)
-        start_prototype=prototype_report(list(start_service_instance.reposity.data[reposity.transaction_key()].values()))
-        first_range=list(start_service_instance.reposity.data[reposity.range_key()].values())[0]
-        storage_obj=start_service_instance.reposity.data[reposity.storage_key()]["Storage A"]
+        start_prototype=prototype_report(list(start_service_instance.reposity.data[reposity_keys.transaction_key()].values()))
+        first_range=list(start_service_instance.reposity.data[reposity_keys.range_key()].values())[0]
+        storage_obj=list(start_service_instance.reposity.data[reposity_keys.storage_key()].values())[0]
         filters=[
             filter_dto.create("range","eq",first_range),
             filter_dto.create("storage","eq",storage_obj)
@@ -46,9 +47,9 @@ class TestPrototype:
         """
         start_service_instance=start_service()
         start_service_instance.start(True)
-        start_prototype=prototype_report(list(start_service_instance.reposity.data[reposity.transaction_key()].values()))
-        first_range=list(start_service_instance.reposity.data[reposity.range_key()].values())[0]
-        second_range=list(start_service_instance.reposity.data[reposity.range_key()].values())[1]
+        start_prototype=prototype_report(list(start_service_instance.reposity.data[reposity_keys.transaction_key()].values()))
+        first_range=list(start_service_instance.reposity.data[reposity_keys.range_key()].values())[0]
+        second_range=list(start_service_instance.reposity.data[reposity_keys.range_key()].values())[1]
         filters1=[
             filter_dto.create("range","in",[first_range,second_range])
         ]

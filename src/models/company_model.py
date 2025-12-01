@@ -1,4 +1,4 @@
-from .abstract_reference import *
+from ..core.abstract_reference import *
 
 
 class company_model(abstract_reference):

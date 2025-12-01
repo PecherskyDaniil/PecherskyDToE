@@ -3,7 +3,7 @@ from .response_csv import response_csv
 from .response_markdown import response_markdown
 from .response_json import response_json
 from .response_xml import response_xml
-from ..models.abstract_reference import operation_exception
+from ..core.abstract_reference import operation_exception
 
 class factory_entities:
     """

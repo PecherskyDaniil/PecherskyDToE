@@ -1,4 +1,4 @@
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from .range_model import range_model
 from ..dto.proportion_dto import proportion_dto
 
