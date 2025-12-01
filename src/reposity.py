@@ -7,7 +7,7 @@ from .core.reposity_keys import reposity_keys
 from .core.abstract_logic import abstract_logic
 from .core.observe_service import observe_service
 from .core.event_type import event_type
-from .core.abstract_reference import abstract_reference,model_validator
+from .core.abstract_reference import abstract_reference,model_validator,operation_exception
 from .models.range_group_model import range_group_model
 from .models.range_model import range_model
 from .models.receipt_model import receipt_model
@@ -72,7 +72,7 @@ class reposity(abstract_logic):
     
     def handle_add_new_object(self,reference_object:abstract_reference):
         if reference_object.uuid in self.data[reposity._reference_keys_maps[type(reference_object)]].keys():
-            raise Exception(f"Object with this uuid already in reposity {reference_object.uuid}")
+            raise operation_exception(f"Object with this uuid already in reposity {reference_object.uuid}")
 
     def handle_delete_object(self,reference_object:abstract_reference):
 
@@ -81,38 +81,38 @@ class reposity(abstract_logic):
             unit_base_prototype=prototype(list(self.data[reposity_keys.unit_key()].values()))
             filtered_unit_base_prototype=unit_base_prototype.filter([filter_dto.create("base_unit.uuid","eq",reference_object.uuid)])
             if len(filtered_unit_base_prototype.data)>0:
-                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+                raise operation_exception(f"Cant delete object with uuid {reference_object.uuid}")
 
             range_base_prototype=prototype(list(self.data[reposity_keys.range_key()].values()))
             filtered_range_base_prototype=range_base_prototype.filter([filter_dto.create("unit.uuid","eq",reference_object.uuid)])
             if len(filtered_range_base_prototype.data)>0:
-                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+                raise operation_exception(f"Cant delete object with uuid {reference_object.uuid}")
             
             transaction_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
             filtered_transaction_base_prototype=transaction_base_prototype.filter([filter_dto.create("unit.uuid","eq",reference_object.uuid)])
             if len(filtered_transaction_base_prototype.data)>0:
-                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+                raise operation_exception(f"Cant delete object with uuid {reference_object.uuid}")
             
         elif isinstance(reference_object,range_model):
             for receipt_object in self.data[reposity_keys.receipt_key()].values():
                 for proportion_object in receipt_object.ingridients:
                     if proportion_object.range==reference_object:
-                        raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+                        raise operation_exception(f"Cant delete object with uuid {reference_object.uuid}")
             
             transaction_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
             filtered_transaction_base_prototype=transaction_base_prototype.filter([filter_dto.create("range.uuid","eq",reference_object.uuid)])
             if len(filtered_transaction_base_prototype.data)>0:
-                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+                raise operation_exception(f"Cant delete object with uuid {reference_object.uuid}")
         elif isinstance(reference_object,range_group_model):
             range_base_prototype=prototype(list(self.data[reposity_keys.range_key()].values()))
             filtered_range_base_prototype=range_base_prototype.filter([filter_dto.create("group.uuid","eq",reference_object.uuid)])
             if len(filtered_range_base_prototype.data)>0:
-                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+                raise operation_exception(f"Cant delete object with uuid {reference_object.uuid}")
         elif isinstance(reference_object,storage_model):
             transaction_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
             filtered_transaction_base_prototype=transaction_base_prototype.filter([filter_dto.create("storage.uuid","eq",reference_object.uuid)])
             if len(filtered_transaction_base_prototype.data)>0:
-                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+                raise operation_exception(f"Cant delete object with uuid {reference_object.uuid}")
 
 
     def handle_change_object(self,reference_object:abstract_reference):
