@@ -1,11 +1,13 @@
 import pytest
 import json
 
-from src.models.abstract_reference import *
+from src.core.abstract_reference import *
 from src.models.range_group_model import range_group_model
 from src.models.range_model import range_model
 from src.models.unit_model import unit_model
-
+from src.dto.range_dto import range_dto
+from src.reposity import reposity
+from src.core.reposity_keys import reposity_keys
 class TestRangeModel:
     """
     Tests of range_model
@@ -86,3 +88,42 @@ class TestRangeModel:
         assert custom_item.full_name == "Тестовый продукт"
         assert custom_item.unit is test_unit
         assert custom_item.group is test_group
+    
+
+    def test_valid_init_from_dto_range(self):
+        """
+        Test on valid init from dto object range_model
+        """
+        #Подготовка
+        cache={
+            reposity_keys.unit_key():{"123":unit_model("gramm",None,1.0)},
+            reposity_keys.range_group_key():{"234":range_group_model("products")}
+        }
+        #Создание
+        range_dto_obj=range_dto()
+        range_dto_obj.name="Cheese"
+        range_dto_obj.group_id="234"
+        range_dto_obj.unit_id="123"
+        range_dto_obj.full_name="Mega Cheese"
+        range_dto_obj.uuid="112233"
+        #Присваивание
+        range_obj=range_model.from_dto(range_dto_obj,cache)
+        #Проверка
+        assert range_obj.name=="Cheese"
+        assert range_obj.full_name=="Mega Cheese"
+        assert range_obj.group is cache[reposity_keys.range_group_key()]["234"]
+        assert range_obj.unit is cache[reposity_keys.unit_key()]["123"]
+    
+    def test_valid_convert_to_dto_range_group(self):
+        """
+        Test on valid convert to dto object range_group_model
+        """
+        #Создание
+        range_obj=range_model("Cheese","Mega Cheese",unit_model("gramm",None,1.0),range_group_model("products"))
+        #Присваивание
+        range_dto_obj=range_obj.to_dto()
+        #Проверка
+        assert range_dto_obj.name=="Cheese"
+        assert range_dto_obj.full_name=="Mega Cheese"
+        assert range_dto_obj.unit_id==range_obj.unit.uuid
+        assert range_dto_obj.group_id==range_obj.group.uuid

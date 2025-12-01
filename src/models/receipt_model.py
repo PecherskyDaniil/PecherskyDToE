@@ -1,9 +1,12 @@
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from .range_model import range_model
 from .range_group_model import range_group_model
 from .step import step
-from.proportion import proportion
-
+from .proportion import proportion
+from ..dto.receipt_dto import receipt_dto
+from ..dto.proportion_dto import proportion_dto
+from ..dto.step_dto import step_dto
+from ..core.reposity_keys import reposity_keys
 class receipt_model(abstract_reference):
     """
     Class that contains info about receipt
@@ -96,3 +99,40 @@ class receipt_model(abstract_reference):
         Function that creates receipt
         """
         return receipt_model(name,ingridients,steps,time)
+
+    @staticmethod
+    def from_dto(dto:receipt_dto, cache:dict):
+        """
+        Function that convert instance from dto
+        """
+        model_validator.validate(dto, receipt_dto)
+        model_validator.validate(cache, dict)
+        
+        steps=[]
+        for step_obj in dto.steps:
+            steps.append(step(step_obj["step_description"]))
+        ingridients=[]
+        for receipt_item in dto.ingridients:
+            range_obj=cache[reposity_keys.range_key()][receipt_item["range_id"]] if receipt_item["range_id"] in cache[reposity_keys.range_key()] else None
+            ingridients.append(proportion(range_obj,receipt_item["proportion_value"]))
+        item = receipt_model.create(dto.name,ingridients,steps,dto.time)
+        item.uuid=dto.uuid
+        return item
+
+    def to_dto(self):
+        """
+        Function that convert instance to dto
+        """
+        item=receipt_dto()
+        item.name=self.name
+        item.uuid=self.uuid
+        ingridients=[]
+        for proportion_obj in self.ingridients:
+            ingridients.append(proportion_obj.to_dto())
+        item.ingridients=ingridients
+        steps=[]
+        for step_obj in self.steps:
+            steps.append(step_obj.to_dto())
+        item.steps=steps
+        item.time=self.time
+        return item

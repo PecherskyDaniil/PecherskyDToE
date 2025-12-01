@@ -1,8 +1,9 @@
 
-from .abstract_reference import *
+from ..core.abstract_reference import *
 from .unit_model import unit_model
 from .range_group_model import range_group_model
-from functools import lru_cache
+from ..dto.range_dto import range_dto
+from ..core.reposity_keys import reposity_keys
 class range_model(abstract_reference):
     """
     Class for work with range. Inherited from abstract_reference
@@ -97,4 +98,28 @@ class range_model(abstract_reference):
         """
         return range_model(name,full_name,unit,range_group)
     
+    @staticmethod
+    def from_dto(dto:range_dto, cache:dict):
+        """
+        Function that creates instance from dto object
+        """
+        model_validator.validate(dto, range_dto)
+        model_validator.validate(cache, dict)
+        unit =  cache[reposity_keys.unit_key()][ dto.unit_id ] if dto.unit_id in cache[reposity_keys.unit_key()] else None
+        group= cache[reposity_keys.range_group_key()][ dto.group_id ] if dto.group_id in cache[reposity_keys.range_group_key()] else None
+        item  = range_model.create(dto.name,dto.full_name,unit,group)
+        item.uuid=dto.uuid
+        return item
+
+    def to_dto(self):
+        """
+        Function that convert instance to dto
+        """
+        item=range_dto()
+        item.name=self.name
+        item.uuid=self.uuid
+        item.unit_id=self.unit.uuid
+        item.group_id=self.group.uuid
+        item.full_name=self.full_name
+        return item
     

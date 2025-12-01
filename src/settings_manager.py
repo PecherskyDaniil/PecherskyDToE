@@ -4,6 +4,8 @@ import json
 from .models.company_model import company_model
 from .models.settings_model import settings_model
 from .models.abstract_reference import *
+from .logics.factory_entities import factory_entities
+import datetime
 class settings_manager:
     """
     Class for work all setting of system. Singletone
@@ -12,7 +14,7 @@ class settings_manager:
     """
     __config_filename:str=""
     __settings:settings_model=None
-
+    
     def __init__(self,config_filename:str=""):
         """
         Constructor of class
@@ -36,6 +38,17 @@ class settings_manager:
         """
         return self.__config_filename
     
+    
+
+    @property
+    def settings(self)->settings_model:
+        """
+        Function that returns settings
+        """
+        return self.__settings
+
+    
+
     @property
     def company_settings(self)->company_model:
         """
@@ -69,10 +82,21 @@ class settings_manager:
                 self.__settings.company_settings.account=item["account"]
                 self.__settings.company_settings.coraccount=item["coraccount"]
                 self.__settings.company_settings.property_type=item["property_type"]
-                return True
             else:
                 return False
+            if "api" in data.keys():
+                self.__settings.response_format=data["api"]["default_response_format"]
+            else:
+                return False
+            if "first_start" in data.keys():
+                self.__settings.first_start=data["first_start"]
+            else:
+                return False
+            if "block_datetime" in data.keys():
+                self.__settings.block_datetime=datetime.datetime.strptime(data["block_datetime"],"%Y-%m-%dT%H:%M:%S")
+            return True
         except Exception as e:
+            
             return False
     
     def convert(self,data:dict):

@@ -1,7 +1,7 @@
 import pytest
 import json
 
-from src.models.abstract_reference import *
+from src.core.abstract_reference import *
 from src.models.company_model import company_model
 from src.models.range_group_model import range_group_model
 from src.models.range_model import range_model

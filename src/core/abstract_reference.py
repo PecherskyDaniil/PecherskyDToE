@@ -42,12 +42,14 @@ class Operator(Enum):
     """
     Special class that contains all operators of compare
     """
-    EQ=auto() #=
-    GT=auto() #>
-    LT=auto() #<
-    GE=auto() #>=
-    LE=auto() #<=
-    NE=auto() #!=
+    EQ="eq" #=
+    GT="gt" #>
+    LT="lt" #<
+    GE="ge" #>=
+    LE="le" #<=
+    NE="ne" #!=
+    IN="in"
+    LIKE="like"
 
 
 class limit_model():
@@ -203,6 +205,12 @@ class model_validator():
             return True #if it is return true
         else: #else
             return False # return false
+    @staticmethod
+    def validate(value,type):
+        if value is None:
+            return
+        if not(model_validator.check_type(value,type)):
+            raise argument_exception(f"value should be {type}")
 
 class abstract_reference(ABC):
     """
@@ -239,6 +247,7 @@ class abstract_reference(ABC):
         value - str
         """
         if value==None or self._prop_validator.valid_property("name",value): # value should fits limit
+
             self.__name=value # if everything ok sets value
         else: #else
             raise argument_exception("wrong value for name") # else raises exception
@@ -277,3 +286,6 @@ class abstract_reference(ABC):
         Function that creates instance of model
         """
         pass
+
+    #def __str__(self):
+    #    return self.uuid

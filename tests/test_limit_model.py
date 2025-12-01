@@ -1,7 +1,7 @@
 import pytest
 import json
 
-from src.models.abstract_reference import *
+from src.core.abstract_reference import *
 
 class TestLimitModel:
     """
