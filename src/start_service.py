@@ -352,20 +352,32 @@ class start_service(abstract_logic):
         return item
 
     def create_storage_a(self):
+        """
+        Default create storage A
+        """
         item=storage_model()
         item.name="Storage A"
         self.__create_default_value(reposity_keys.storage_key(),item)
 
     def create_storage_b(self):
+        """
+        Default create storage B
+        """
         item=storage_model()
         item.name="Storage B"
         self.__create_default_value(reposity_keys.storage_key(),item)
 
     def default_create_storages(self):
+        """
+        Default create storages
+        """
         self.create_storage_a()
         self.create_storage_b()
     
     def default_create_transactions(self):
+        """
+        Default create transactions
+        """
         start_date=datetime.datetime.strptime("2024-01-01T12:00:00","%Y-%m-%dT%H:%M:%S")
         storage=list(self.reposity.data[reposity_keys.storage_key()].values())[0]
         for day in range(0,365):
@@ -383,6 +395,9 @@ class start_service(abstract_logic):
                 self.__create_default_value(reposity_keys.transaction_key(),item)
 
     def create_block_remnant(self):
+        """
+        Create block remnants by block_datetime
+        """
         self.reposity.data[reposity_keys.remnant_key()]={}
         remnants=self.create_remnant(self.block_datetime)
         for remnant_obj in remnants:
@@ -456,6 +471,9 @@ class start_service(abstract_logic):
         #        remnants.append(remnant_obj)
         #return remnants
     def reposity_to_json(self):
+        """
+        Convert reposity data to JSON
+        """
         data={}
         data[reposity_keys.unit_json_key()]=convert_factory().convert(self.reposity.data[reposity_keys.unit_key()])
         data[reposity_keys.range_group_json_key()]=convert_factory().convert(self.reposity.data[reposity_keys.range_group_key()])
@@ -510,12 +528,18 @@ class start_service(abstract_logic):
             return False
     
     def __save_item(self, key:str, dto:abstract_dto, item:abstract_reference):
+        """
+        Function to Save item in reposity
+        """
         model_validator.validate(key, str)
         item.uuid = dto.uuid
         self.__cache.setdefault(dto.uuid, item)
         self.reposity.data[key][item.uuid]=item
 
     def __convert_units(self, data: dict) -> bool:
+        """
+        Convert units from json
+        """
         model_validator.validate(data, dict)
         units = data['units'] if 'units' in data else []    
         if len(units) == 0:
@@ -530,6 +554,9 @@ class start_service(abstract_logic):
 
     # Загрузить группы номенклатуры
     def __convert_groups(self, data: dict) -> bool:
+        """
+        Convert groups from json
+        """
         model_validator.validate(data, dict)
         range_groups =  data['range_groups'] if 'range_groups' in data else []    
         if len(range_groups) == 0:
@@ -544,6 +571,9 @@ class start_service(abstract_logic):
 
     # Загрузить номенклатуру
     def __convert_ranges(   self, data: dict) -> bool:
+        """
+        Convert ranges from json
+        """
         model_validator.validate(data, dict)      
         ranges = data['ranges'] if 'ranges' in data else []   
         if len(ranges) == 0:
@@ -557,6 +587,9 @@ class start_service(abstract_logic):
         return True     
     
     def __convert_storages(self, data: dict) -> bool:
+        """
+        Convert storages from json
+        """
         model_validator.validate(data, dict)      
         storages = data['storages'] if 'storages' in data else []   
         if len(storages) == 0:
@@ -570,6 +603,9 @@ class start_service(abstract_logic):
         return True   
 
     def __convert_transactions(self, data: dict) -> bool:
+        """
+        Convert transactions from json
+        """
         model_validator.validate(data, dict)      
         transactions = data['transactions'] if 'transactions' in data else []   
         if len(transactions) == 0:
@@ -583,6 +619,9 @@ class start_service(abstract_logic):
         return True   
 
     def __convert_receipt(self,data:dict)->bool:
+        """
+        Convert receipts from json
+        """
         model_validator.validate(data, dict)
         receipts=data["receipts"] if "receipts" in data else []   
         if len(receipts)==0:
@@ -594,6 +633,9 @@ class start_service(abstract_logic):
         return True 
     
     def __convert_remnants(self,data:dict)->bool:
+        """
+        Convert remnants from json
+        """
         model_validator.validate(data, dict)
         remnants=data["remnants"] if "remnants" in data else []   
         if len(remnants)==0:
@@ -639,6 +681,9 @@ class start_service(abstract_logic):
     
 
     def create_balance_sheet(self,start_datetime_filters:list,main_datetime_filters:list,storage_filters:list,other_filters:list=[]):
+        """
+        Create balance sheets
+        """
         transactions=list(self.reposity.data[reposity_keys.transaction_key()].values())
         base_prototype=prototype_report(transactions)
         
@@ -679,6 +724,9 @@ class start_service(abstract_logic):
         return balance_sheet
     
     def create_balance_sheet_with_remnants(self,start_datetime_filters:list,main_datetime_filters:list,storage_filters:list,other_filters:list=[]):
+        """
+        Create balance sheets using remnants (faster)
+        """
         transactions=list(self.reposity.data[reposity_keys.transaction_key()].values())
         base_prototype=prototype_report(transactions)
         
