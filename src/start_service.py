@@ -12,14 +12,22 @@ from .models.proportion import proportion
 from .models.step import step
 from .dto.abstract_dto import abstract_dto
 from .dto.storage_dto import storage_dto
+from .dto.range_dto import range_dto
+from .dto.range_group_dto import range_group_dto
+from .dto.transaction_dto import transaction_dto
+from .dto.filter_dto import filter_dto
+from .dto.receipt_dto import receipt_dto
+from .dto.unit_dto import unit_dto
 from .models.storage_model import storage_model
 from .models.transaction_model import transaction_model
-from .dto.transaction_dto import transaction_dto
+from .core.reposity_keys import reposity_keys
 from .models.remnant_model import remnant_model,remnant_dto
 import datetime
 from .logics.prototype_report import prototype_report
-from .dto.filter_dto import filter_dto
-class start_service:
+from .core.abstract_logic import abstract_logic
+from .core.observe_service import observe_service
+from .core.event_type import event_type
+class start_service(abstract_logic):
     """
     Class that creates all default data and start work of all service
     reposity:reposity - where the data contains
@@ -33,13 +41,17 @@ class start_service:
         """
         Constructor of class
         """
-        self.__reposity.data[reposity.unit_key()] = {}
-        self.__reposity.data[reposity.range_key()] = {}
-        self.__reposity.data[reposity.range_group_key()] = {}
-        self.__reposity.data[reposity.receipt_key()] = {}
-        self.__reposity.data[reposity.storage_key()]={}
-        self.__reposity.data[reposity.transaction_key()]={}
-        self.__reposity.data[reposity.remnant_key()]={}
+        super().__init__()
+
+        # Подключение в наблюдение
+        observe_service.add(self)
+        self.__reposity.data[reposity_keys.unit_key()] = {}
+        self.__reposity.data[reposity_keys.range_key()] = {}
+        self.__reposity.data[reposity_keys.range_group_key()] = {}
+        self.__reposity.data[reposity_keys.receipt_key()] = {}
+        self.__reposity.data[reposity_keys.storage_key()]={}
+        self.__reposity.data[reposity_keys.transaction_key()]={}
+        self.__reposity.data[reposity_keys.remnant_key()]={}
 
     """
     Реализация Singleton
@@ -49,6 +61,13 @@ class start_service:
             cls.__instance = super(start_service, cls).__new__(cls)
         return cls.__instance
     
+    def handle(self, event:str, params):
+        super().handle(event, params)  
+        
+        if event==event_type.added_new_object() or event==event_type.object_deleted() or event==event_type.change_object():
+            model_validator.validate(params,abstract_reference)
+            if isinstance(params,transaction_model) or isinstance(params,range_model) or isinstance(params,transaction_model):
+                self.create_block_remnant()
 
     @property
     def block_datetime(self):
@@ -64,6 +83,7 @@ class start_service:
         """
         model_validator.validate(value,datetime.datetime)
         self.__block_datetime=value
+        observe_service.create_event(event_type.changed_block_datetime(),value)
 
 
     @property
@@ -76,9 +96,14 @@ class start_service:
         """
         Function that creates deafult instances and save it in class
         """
-        if obj.name not in self.reposity.data[key].keys():
-            self.reposity.data[key][obj.name]=obj
-        return self.reposity.data[key][obj.name]
+        if obj.name not in [x.name for x in self.reposity.data[key].values()]:
+            self.reposity.data[key][obj.uuid]=obj
+            return self.reposity.data[key][obj.uuid]
+        else:
+            for old_obj in self.reposity.data[key].values():
+                if old_obj.name==obj.name:
+                    return old_obj
+        
 
     def default_create_unit(self):
         """

@@ -1,22 +1,43 @@
-from .models.abstract_reference import abstract_reference
-from .dto.receipt_dto import receipt_dto
-from .dto.range_dto import range_dto
-from .dto.unit_dto import unit_dto
-from .dto.range_group_dto import range_group_dto
-from .models.unit_model import unit_model
+
+#from .converters.convert_factory import convert_factory
+from .core.abstract_logic import abstract_logic
+from .core.abstract_reference import model_validator
+from .core.event_type import event_type
+from .core.reposity_keys import reposity_keys
+from .core.abstract_logic import abstract_logic
+from .core.observe_service import observe_service
+from .core.event_type import event_type
+from .core.abstract_reference import abstract_reference,model_validator
 from .models.range_group_model import range_group_model
 from .models.range_model import range_model
 from .models.receipt_model import receipt_model
-from .models.proportion import proportion
-from .models.step import step
-
-from .converters.convert_factory import convert_factory
-class reposity:
+from .models.storage_model import storage_model
+from .models.transaction_model import transaction_model
+from .models.unit_model import unit_model
+from .core.prototype import prototype
+from .dto.filter_dto import filter_dto
+class reposity(abstract_logic):
     """
     Class that contains data of all system
     data:dict - dict of all data
     """
+    _reference_keys_maps={
+        unit_model:reposity_keys.unit_key(),
+        range_model:reposity_keys.range_key(),
+        range_group_model:reposity_keys.range_group_key(),
+        storage_model:reposity_keys.storage_key(),
+        receipt_model:reposity_keys.receipt_key(),
+        transaction_model:reposity_keys.transaction_key()
+    }
+
+
     __data:dict={}
+
+    def __init__(self):
+        super().__init__()
+
+        # Подключение в наблюдение
+        observe_service.add(self)
     @property
     def data(self):
         """
@@ -30,110 +51,118 @@ class reposity:
         value:dict
         """
         self.__data=data
-    @staticmethod
-    def unit_key():
-        """
-        Function that returns data key for units
-        """
-        return "unit_model"
-    @staticmethod
-    def range_group_key():
-        """
-        Function that returns data key for range_groups
-        """
-        return "range_group_model"
-    @staticmethod
-    def range_key():
-        """
-        Function that returns data key for ranges
-        """
-        return "range_model"
-    @staticmethod
-    def receipt_key():
-        """
-        Function that returns data key for receipts
-        """
-        return "receipt_model"
     
-    @staticmethod
-    def storage_key():
-        """
-        Function that returns data key for storages
-        """
-        return "storage_model"
-    @staticmethod
-    def transaction_key():
-        """
-        Function that returns data key for transactions
-        """
-        return "transaction_model"
-
-    @staticmethod
-    def remnant_key():
-        """
-        Function that returns data key for transactions
-        """
-        return "remnant_model"
-
-    @staticmethod
-    def unit_json_key():
-        """
-        Function that returns json key for units
-        """
-        return "units"
     
-    @staticmethod
-    def range_group_json_key():
-        """
-        Function that returns json key for range_groups
-        """
-        return "range_groups"
-    @staticmethod
-    def range_json_key():
-        """
-        Function that returns json key for ranges
-        """
-        return "ranges"
-    @staticmethod
-    def receipt_json_key():
-        """
-        Function that returns json key for receipts
-        """
-        return "receipts"
 
-    @staticmethod
-    def storage_json_key():
-        """
-        Function that returns data key for storages
-        """
-        return "storages"
-    @staticmethod
-    def transcation_json_key():
-        """
-        Function that returns data key for transactions
-        """
-        return "transactions"
+    """
+    Обработка событий
+    """
+    def handle(self, event:str, params):
+        super().handle(event, params)  
 
-    @staticmethod
-    def remnant_json_key():
-        """
-        Function that returns data key for transactions
-        """
-        return "remnants"
+        if not(isinstance(params,abstract_reference)):
+            return
+        
+        if event==event_type.add_new_object():
+            return self.handle_add_new_object(params)
+        elif event==event_type.start_deletion_object():
+            return self.handle_delete_object(params)
+        elif event==event_type.change_object():
+            return self.handle_change_object(params)
     
-    def __class_to_json(self,key:str):
-        return convert_factory().convert(self.data[key])
-    
-    def to_json(self):
-        """
-        Function that convert reposity data to json
-        """
-        data={}
-        data[reposity.receipt_json_key()]=self.__class_to_json(reposity.receipt_key())
-        data[reposity.range_json_key()]=self.__class_to_json(reposity.range_key())
-        data[reposity.unit_json_key()]=self.__class_to_json(reposity.unit_key())
-        data[reposity.range_group_json_key()]=self.__class_to_json(reposity.range_group_key())
-        data[reposity.storage_json_key()]=self.__class_to_json(reposity.storage_key())
-        data[reposity.transcation_json_key()]=self.__class_to_json(reposity.transaction_key())
-        data[reposity.remnant_json_key()]=self.__class_to_json(reposity.remnant_key())
-        return data
+    def handle_add_new_object(self,reference_object:abstract_reference):
+        if reference_object.uuid in self.data[reposity._reference_keys_maps[type(reference_object)]].keys():
+            raise Exception(f"Object with this uuid already in reposity {reference_object.uuid}")
+
+    def handle_delete_object(self,reference_object:abstract_reference):
+
+        if isinstance(reference_object,unit_model):
+
+            unit_base_prototype=prototype(list(self.data[reposity_keys.unit_key()].values()))
+            filtered_unit_base_prototype=unit_base_prototype.filter([filter_dto.create("base_unit.uuid","eq",reference_object.uuid)])
+            if len(filtered_unit_base_prototype.data)>0:
+                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+
+            range_base_prototype=prototype(list(self.data[reposity_keys.range_key()].values()))
+            filtered_range_base_prototype=range_base_prototype.filter([filter_dto.create("unit.uuid","eq",reference_object.uuid)])
+            if len(filtered_range_base_prototype.data)>0:
+                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+            
+            transaction_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
+            filtered_transaction_base_prototype=transaction_base_prototype.filter([filter_dto.create("unit.uuid","eq",reference_object.uuid)])
+            if len(filtered_transaction_base_prototype.data)>0:
+                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+            
+        elif isinstance(reference_object,range_model):
+            for receipt_object in self.data[reposity_keys.receipt_key()].values():
+                for proportion_object in receipt_object.ingridients:
+                    if proportion_object.range==reference_object:
+                        raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+            
+            transaction_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
+            filtered_transaction_base_prototype=transaction_base_prototype.filter([filter_dto.create("range.uuid","eq",reference_object.uuid)])
+            if len(filtered_transaction_base_prototype.data)>0:
+                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+        elif isinstance(reference_object,range_group_model):
+            range_base_prototype=prototype(list(self.data[reposity_keys.range_key()].values()))
+            filtered_range_base_prototype=range_base_prototype.filter([filter_dto.create("group.uuid","eq",reference_object.uuid)])
+            if len(filtered_range_base_prototype.data)>0:
+                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+        elif isinstance(reference_object,storage_model):
+            transaction_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
+            filtered_transaction_base_prototype=transaction_base_prototype.filter([filter_dto.create("storage.uuid","eq",reference_object.uuid)])
+            if len(filtered_transaction_base_prototype.data)>0:
+                raise Exception(f"Cant delete object with uuid {reference_object.uuid}")
+
+
+    def handle_change_object(self,reference_object:abstract_reference):
+        if isinstance(reference_object,unit_model):
+            unit_base_prototype=prototype(list(self.data[reposity_keys.unit_key()].values()))
+            filtered_unit_base_prototype=unit_base_prototype.filter([filter_dto.create("base_unit.uuid","eq",reference_object.uuid)])
+            for unit_object in filtered_unit_base_prototype.data:
+                self.data[reposity_keys.unit_key()][unit_object.uuid].base_unit=reference_object
+
+            range_base_prototype=prototype(list(self.data[reposity_keys.range_key()].values()))
+            filtered_range_base_prototype=range_base_prototype.filter([filter_dto.create("unit.uuid","eq",reference_object.uuid)])
+            for range_object in filtered_range_base_prototype.data:
+                self.data[reposity_keys.range_key()][range_object.uuid].unit=reference_object
+
+            transaction_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
+            filtered_transaction_base_prototype=transaction_base_prototype.filter([filter_dto.create("unit.uuid","eq",reference_object.uuid)])
+            for transaction_object in filtered_transaction_base_prototype.data:
+                self.data[reposity_keys.transaction_key()][transaction_object.uuid].unit=reference_object
+
+            remnant_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
+            filtered_remnant_base_prototype=remnant_base_prototype.filter([filter_dto.create("unit.uuid","eq",reference_object.uuid)])
+            for remnant_obj in filtered_remnant_base_prototype.data:
+                self.data[reposity_keys.transaction_key()][remnant_obj.uuid].unit=reference_object
+            
+            return True
+        elif isinstance(reference_object,range_model):
+            for receipt_object in self.data[reposity_keys.receipt_key()].values():
+                for proportion_object in receipt_object.ingridients:
+                    if proportion_object.range.uuid==reference_object.uuid:
+                        proportion_object.range=reference_object
+            
+            transaction_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
+            filtered_transaction_base_prototype=transaction_base_prototype.filter([filter_dto.create("range.uuid","eq",reference_object.uuid)])
+            for transaction_object in filtered_transaction_base_prototype.data:
+                self.data[reposity_keys.transaction_key()][transaction_object.uuid].range=reference_object
+
+            remnant_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
+            filtered_remnant_base_prototype=remnant_base_prototype.filter([filter_dto.create("range.uuid","eq",reference_object.uuid)])
+            for remnant_obj in filtered_remnant_base_prototype.data:
+                self.data[reposity_keys.transaction_key()][remnant_obj.uuid].range=reference_object
+        elif isinstance(reference_object,range_group_model):
+            range_base_prototype=prototype(list(self.data[reposity_keys.range_key()].values()))
+            filtered_range_base_prototype=range_base_prototype.filter([filter_dto.create("group.uuid","eq",reference_object.uuid)])
+            for range_object in filtered_range_base_prototype.data:
+                self.data[reposity_keys.range_key()][range_object.uuid].group=reference_object
+            
+        elif isinstance(reference_object,storage_model):
+            transaction_base_prototype=prototype(list(self.data[reposity_keys.transaction_key()].values()))
+            filtered_transaction_base_prototype=transaction_base_prototype.filter([filter_dto.create("storage.uuid","eq",reference_object.uuid)])
+            for transaction_object in filtered_transaction_base_prototype.data:
+                self.data[reposity_keys.transaction_key()][transaction_object.uuid].storage=reference_object
+
+            return True

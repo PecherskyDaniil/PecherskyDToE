@@ -358,11 +358,141 @@ def get_remnants_by_datetime():
             content_type=result_format.response_type(),
             )
     except Exception as e:
-        raise e
+        #raise e
         return Response(
             response="Server problem",
             status=500,
             content_type="text/plain",
             )
+
+@app.route("/api/<model>", methods=['PUT'])
+def add_new_model(model:str):
+    """
+    Add new reference object to reposity
+    """
+    if model not in start_service_instance.reposity.data.keys():
+        return Response(
+            status=404,
+            response=f"There isn't model with name {model}",
+            content_type="text/plain"
+        )
+    try:
+        content=request.get_json()
+        reference=model_maps[model]
+        dto=dto_maps[model]
+        dto_object=dto().create(content)
+        reference_object=reference.from_dto(dto_object,start_service_instance.reposity.data)
+        add_result=reference_service.add(start_service_instance,reference_object)
+        if not(add_result):
+            raise Exception
+        result_format=factory_entity.create_default()()
+        result=result_format.create([reference_object])
+        return Response(
+            response=result,
+            status=200,
+            content_type=result_format.response_type(),
+            )
+    except Exception as e:
+        #raise e
+        if str(e)=="Формат не верный":
+            return Response(
+                status=404,
+                response="Format isn't supported",
+                content_type="text/plain"
+            )
+        else:
+            return Response(
+                response="Server problem",
+                status=500,
+                content_type="text/plain",
+                )
+
+@app.route("/api/<model>", methods=['PATCH'])
+def change_model(model:str):
+    """
+    Add new reference object to reposity
+    """
+    if model not in start_service_instance.reposity.data.keys():
+        return Response(
+            status=404,
+            response=f"There isn't model with name {model}",
+            content_type="text/plain"
+        )
+    try:
+        content=request.get_json()
+        reference=model_maps[model]
+        dto=dto_maps[model]
+        dto_object=dto().create(content)
+        reference_object=reference.from_dto(dto_object,start_service_instance.reposity.data)
+        change_result=reference_service.change(start_service_instance,reference_object)
+        if not(change_result):
+            raise Exception
+        result_format=factory_entity.create_default()()
+        result=result_format.create([reference_object])
+        return Response(
+            response=result,
+            status=200,
+            content_type=result_format.response_type(),
+            )
+    except Exception as e:
+        #raise e
+        if str(e)=="Формат не верный":
+            return Response(
+                status=404,
+                response="Format isn't supported",
+                content_type="text/plain"
+            )
+        else:
+            return Response(
+                response="Server problem",
+                status=500,
+                content_type="text/plain",
+                )
+
+@app.route("/api/<model>", methods=['DELETE'])
+def delete_model(model:str):
+    """
+    Add new reference object to reposity
+    """
+    if model not in start_service_instance.reposity.data.keys():
+        return Response(
+            status=404,
+            response=f"There isn't model with name {model}",
+            content_type="text/plain"
+        )
+    try:
+        content=request.get_json()
+        reference_object=start_service_instance.reposity.data[model][content["uuid"]]
+        delete_result=reference_service.delete(start_service_instance,reference_object)
+        if not(delete_result):
+            raise Exception("Cant delete this object")
+        result_format=factory_entity.create_default()()
+        result=result_format.create([reference_object])
+        return Response(
+            response=result,
+            status=200,
+            content_type=result_format.response_type(),
+            )
+    except Exception as e:
+        #raise e
+        if str(e)=="Cant delete this object":
+            return Response(
+                status=404,
+                response="Cant delete this object",
+                content_type="text/plain"
+            )
+        elif str(e)=="Формат не верный":
+            return Response(
+                status=404,
+                response="Format isn't supported",
+                content_type="text/plain"
+            )
+        else:
+            return Response(
+                response="Server problem",
+                status=500,
+                content_type="text/plain",
+                )
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port = 8080)
