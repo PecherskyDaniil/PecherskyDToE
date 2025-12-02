@@ -30,9 +30,9 @@ class reference_service:
         Adding object to reposity
         """
         try:
-            observe_service.create_event(event_type.add_new_object(),reference_object)
+            observe_service.create_event(event_type.add_new_object(),[start_service_instance.reposity,reference_object])
             start_service_instance.reposity.data[reference_service._reference_keys_maps[type(reference_object)]][reference_object.uuid]=reference_object
-            observe_service.create_event(event_type.added_new_object(),reference_object)
+            observe_service.create_event(event_type.added_new_object(),[start_service_instance.reposity,reference_object])
             return True
         except:
             return False
@@ -42,11 +42,11 @@ class reference_service:
         Deleting object from reposity
         """
         try:
-            observe_service.create_event(event_type.start_deletion_object(),reference_object)
+            observe_service.create_event(event_type.start_deletion_object(),[start_service_instance.reposity,reference_object])
             start_service_instance.reposity.data[reference_service._reference_keys_maps[type(reference_object)]].pop(reference_object.uuid)
-            observe_service.create_event(event_type.object_deleted(),reference_object)
+            observe_service.create_event(event_type.object_deleted(),[start_service_instance.reposity,reference_object])
             return True
-        except:
+        except Exception as e:
             return False
     
     def change(start_service_instance:start_service,reference_object:abstract_reference):
@@ -54,5 +54,5 @@ class reference_service:
         Changing object in reposity
         """
         start_service_instance.reposity.data[reference_service._reference_keys_maps[type(reference_object)]][reference_object.uuid]=reference_object
-        observe_service.create_event(event_type.change_object(),reference_object)
+        observe_service.create_event(event_type.change_object(),[start_service_instance.reposity,reference_object])
         return True

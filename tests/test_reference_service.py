@@ -6,9 +6,17 @@ from src.start_service import *
 from src.core.observe_service import observe_service
 from src.core.event_type import event_type
 from src.core.reposity_keys import reposity_keys
+from src.logics.unit_service import unit_service
+from src.logics.range_service import range_service
+from src.logics.range_group_service import range_group_service
+from src.logics.receipt_service import receipt_service
+from src.logics.transaction_service import transaction_service
+from src.logics.storage_service import storage_service
+from src.logics.remnant_service import remnant_service
 @pytest.fixture
 def sample_start_service():
     #observe_service.handlers=[]
+
     s_s=start_service()
     s_s.block_datetime=datetime.datetime(2024,10,1)
     s_s.start()

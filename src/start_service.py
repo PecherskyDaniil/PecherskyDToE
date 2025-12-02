@@ -65,8 +65,8 @@ class start_service(abstract_logic):
         super().handle(event, params)  
         
         if event==event_type.added_new_object() or event==event_type.object_deleted() or event==event_type.change_object():
-            model_validator.validate(params,abstract_reference)
-            if isinstance(params,transaction_model) or isinstance(params,range_model) or isinstance(params,transaction_model):
+            model_validator.validate(params[1],abstract_reference)
+            if isinstance(params[1],transaction_model) or isinstance(params[1],range_model) or isinstance(params[1],transaction_model):
                 self.create_block_remnant()
 
     @property
