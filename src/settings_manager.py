@@ -113,6 +113,11 @@ class settings_manager(abstract_logic):
                 return False
             if "block_datetime" in data.keys():
                 self.__settings.block_datetime=datetime.datetime.strptime(data["block_datetime"],"%Y-%m-%dT%H:%M:%S")
+            if "log_level" in data.keys():
+                self.__settings.log_level=data["log_level"]
+            
+            if "log_dir" in data.keys():
+                self.__settings.log_dir=data["log_dir"]
             return True
         except Exception as e:
             

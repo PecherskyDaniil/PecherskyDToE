@@ -1,1 +1,1 @@
-{"company": {"name": "Horns and Clops", "inn": "123456789101", "account": "12345678910", "coraccount": "12345678910", "bic": "123456789", "property_type": "OAOAO"}, "api": {"default_response_format": "csv"}, "first_start": true, "block_datetime": "2024-10-01T12:00:00"}
+{"company": {"name": "Horns and Clops", "inn": "123456789101", "account": "12345678910", "coraccount": "12345678910", "bic": "123456789", "property_type": "OAOAO"}, "api": {"default_response_format": "csv"}, "first_start": true, "block_datetime": "2024-05-01T12:00:00", "log_dir": "./logs", "log_level": "INFO"}

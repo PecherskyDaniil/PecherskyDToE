@@ -4,8 +4,7 @@ from ..core.reposity_keys import reposity_keys
 from ..core.abstract_logic import abstract_logic
 from ..core.observe_service import observe_service
 from ..core.abstract_reference import model_validator,operation_exception,abstract_reference
-from ..models.storage_model import storage_model
-from ..models.unit_model import unit_model
+
 from ..core.prototype import prototype
 from ..dto.filter_dto import filter_dto
 class object_service(abstract_logic):
@@ -28,7 +27,6 @@ class object_service(abstract_logic):
     Обработка событий
     """
     def handle(self, event:str, params):
-        super().handle(event, params)  
 
         if not(isinstance(params,list)) or not(isinstance(params[1],self._serviced_object)):
             return

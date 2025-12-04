@@ -177,3 +177,4 @@ pyrightconfig.json
 
 default_data.json
 test_default_config.json
+logs/
