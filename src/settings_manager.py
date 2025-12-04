@@ -3,10 +3,14 @@ import json
 
 from .models.company_model import company_model
 from .models.settings_model import settings_model
-from .models.abstract_reference import *
+from .core.abstract_reference import *
 from .logics.factory_entities import factory_entities
+from .core.abstract_logic import abstract_logic
+from .core.observe_service import observe_service
+from .core.event_type import event_type
+from .core.abstract_reference import model_validator
 import datetime
-class settings_manager:
+class settings_manager(abstract_logic):
     """
     Class for work all setting of system. Singletone
     config_filename - str : filepath to config file
@@ -20,6 +24,8 @@ class settings_manager:
         Constructor of class
         config_filename - str
         """
+        super().__init__()
+        observe_service.add(self)
         self.config_filename=config_filename
         self.default()
     
@@ -30,6 +36,19 @@ class settings_manager:
         if not hasattr(cls,'instance'):
             cls.instance=super(settings_manager,cls).__new__(cls)
         return cls.instance
+
+    """
+    Обработка событий
+    """
+    def handle(self, event:str, params:datetime.datetime):
+        super().handle(event, params)  
+        
+        if event==event_type.changed_block_datetime():
+            model_validator.validate(params,datetime.datetime)
+            data=json.load(open(self.__config_filename,"r"))
+            data["block_datetime"]=params.strftime("%Y-%m-%dT%H:%M:%S")
+            with open(self.config_filename,"w") as f:
+                f.write(json.dumps(data))
 
     @property
     def config_filename(self)->str:
