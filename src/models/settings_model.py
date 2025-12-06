@@ -1,4 +1,5 @@
 from ..core.abstract_reference import *
+from ..core.log_levels import log_levels
 from .company_model import company_model
 from ..logics.abstract_response import abstract_response
 import datetime
@@ -12,6 +13,8 @@ class settings_model(abstract_reference):
     __response_format:str
     __first_start:bool=None
     __block_datetime:datetime.datetime=None
+    __log_level:str=None
+    __log_dir:str=None
     def __init__(self,name:str="settings"):
         """
         Constructor of class
@@ -66,6 +69,35 @@ class settings_model(abstract_reference):
         Setter for property block_datetime
         """
         self.__block_datetime=value
+
+    @property
+    def log_level(self)->str:
+        """
+        Function that returns property log_level
+        """
+        return self.__log_level
+    @log_level.setter
+    def log_level(self,value:str):
+        """
+        Setter for property log_level
+        """
+        if value not in log_levels.LEVELS_RANK().keys():
+            raise argument_exception(f"Wrong log level {value}")
+        self.__log_level=value
+
+
+    @property
+    def log_dir(self)->str:
+        """
+        Function that returns property log_file
+        """
+        return self.__log_dir
+    @log_dir.setter
+    def log_dir(self,value:str):
+        """
+        Setter for property log_file
+        """
+        self.__log_dir=value
 
     def default(self):
         """

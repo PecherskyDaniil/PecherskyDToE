@@ -26,6 +26,9 @@ from src.models.transaction_model import transaction_model
 from src.models.unit_model import unit_model
 from src.core.reposity_keys import reposity_keys
 from src.logics.reference_service import reference_service
+from src.core.observe_service import observe_service
+from src.core.event_type import event_type
+from src.logics.logger_service import logger_service
 import datetime
 import json
 app = connexion.FlaskApp(__name__)
@@ -36,6 +39,7 @@ factory_entity.default_value=settings_manager_instance.settings.response_format
 if not(load_result):
     raise Exception("cant load config file")
 
+logger=logger_service(settings_manager_instance.settings.log_dir,settings_manager_instance.settings.log_level)
 start_service_instance=start_service()
 start_service_instance.block_datetime=settings_manager_instance.settings.block_datetime
 start_service_instance.start(settings_manager_instance.settings.first_start)
@@ -80,12 +84,15 @@ def get_model_data(model:str,format:str):
     try:
         result_format=factory_entity.create(format)()
         result=result_format.create(list(start_service_instance.reposity.data[model].values()))
+        observe_service.create_event(event_type.response_to_request(),request)
         return Response(
             response=result,
             status=200,
             content_type=result_format.response_type(),
             )
     except Exception as e:
+        observe_service.create_event(event_type.cant_response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         if str(e)=="Формат не верный":
             return Response(
                 status=404,
@@ -114,12 +121,15 @@ def get_model_default_data(model:str):
     try:
         result_format=factory_entity.create_default()()
         result=result_format.create(list(start_service_instance.reposity.data[model].values()))
+        observe_service.create_event(event_type.response_to_request(),request)
         return Response(
             response=result,
             status=200,
             content_type=result_format.response_type(),
             )
     except Exception as e:
+        observe_service.create_event(event_type.cant_response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         if str(e)=="Формат не верный":
             return Response(
                 status=404,
@@ -141,6 +151,7 @@ def get_receipts():
     """
     result_format=factory_entity.create("json")()
     result=result_format.create(list(start_service_instance.reposity.data["receipt_model"].values()))
+    observe_service.create_event(event_type.response_to_request(),request)
     return Response(
         status=200,
         response=result,
@@ -159,6 +170,7 @@ def get_receipt(uuid:str):
         if obj["uuid"]==uuid:
             result=obj
             break
+    observe_service.create_event(event_type.response_to_request(),request)
     return Response(
         status=200,
         response=json.dumps(result),
@@ -172,12 +184,15 @@ def save_reposity():
     """
     try:
         start_service_instance.save_data("default_data.json")
+        observe_service.create_event(event_type.response_to_request(),request)
         return Response(
             status=200,
             response=json.dumps({"detail":"reposity successfuly saved to file"}),
             content_type="application/json"
         )
     except Exception as e:
+        observe_service.create_event(event_type.cant_response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         return Response(
             status=400,
             response=json.dumps({"detail":"internal server error"}),
@@ -196,7 +211,10 @@ def get_balance_sheet():
     try:
         start_datetime=datetime.datetime.strptime(begin_date,"%Y-%m-%dT%H:%M:%S") if begin_date is not None else datetime.datetime.strptime("2000-01-01T00:00:00","%Y-%m-%dT%H:%M:%S")
         end_datetime=datetime.datetime.strptime(end_date,"%Y-%m-%dT%H:%M:%S") if end_date is not None else datetime.datetime.now()
+    
     except Exception as e:
+        observe_service.create_event(event_type.cant_response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         return Response(
             status=400,
             response=json.dumps({"detail":"cant resolve begin date or end date"}),
@@ -216,6 +234,7 @@ def get_balance_sheet():
     balance_sheet=start_service_instance.create_balance_sheet_with_remnants(start_balance_datetime_filters,main_balance_datetime_filters,storage_filters)
     result_format=factory_entity.create("csv")()
     result=result_format.create(balance_sheet)
+    observe_service.create_event(event_type.response_to_request(),request)
     return Response(
             response=result,
             status=200,
@@ -247,6 +266,7 @@ def get_filtered_balance_sheet():
     balance_sheet=start_service_instance.create_balance_sheet(start_datetime_filters,main_datetime_filters,storage_filters,filter_objs)
     result_format=factory_entity.create("csv")()
     result=result_format.create(balance_sheet)
+    observe_service.create_event(event_type.response_to_request(),request)
     return Response(
             response=result,
             status=200,
@@ -278,12 +298,15 @@ def get_filtered_model_data(model:str,format:str):
             result="empty"
         else:
             result=result_format.create(filtered_prototype.data)
+        observe_service.create_event(event_type.response_to_request(),request)
         return Response(
             response=result,
             status=200,
             content_type=result_format.response_type(),
             )
     except Exception as e:
+        observe_service.create_event(event_type.cant_response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         #raise e
         if str(e)=="Формат не верный":
             return Response(
@@ -308,12 +331,15 @@ def change_block_datetime():
         new_block_datetime=datetime.datetime.strptime(content["block_datetime"],"%Y-%m-%dT%H:%M:%S")
         start_service_instance.block_datetime=new_block_datetime
         start_service_instance.create_block_remnant()
+        observe_service.create_event(event_type.response_to_request(),request)
         return Response(
             response=json.dumps({"message":"block datetime changed successfuly"}),
             status=200,
             content_type="application/json",
             )
     except Exception as e:
+        observe_service.create_event(event_type.response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         return Response(
             response="Server problem",
             status=500,
@@ -326,8 +352,7 @@ def get_block_datetime():
     Получить фильтрованную модель данных в указанном формате
     """
     try:
-        
-
+        observe_service.create_event(event_type.response_to_request(),request)
         return Response(
             response=json.dumps({"block_datetime":start_service_instance.block_datetime.strftime("%Y-%m-%dT%H:%M:%S")}),
             status=200,
@@ -335,6 +360,8 @@ def get_block_datetime():
             )
     except Exception as e:
         #raise e
+        observe_service.create_event(event_type.cant_response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         return Response(
             response="Server problem",
             status=500,
@@ -352,6 +379,7 @@ def get_remnants_by_datetime():
         remnants=start_service_instance.create_remnant(datetime.datetime.strptime(datetime_obj,"%Y-%m-%dT%H:%M:%S"))
         result_format=factory_entity.create_default()()
         result=result_format.create(remnants)
+        observe_service.create_event(event_type.response_to_request(),request)
         return Response(
             response=result,
             status=200,
@@ -359,6 +387,8 @@ def get_remnants_by_datetime():
             )
     except Exception as e:
         #raise e
+        observe_service.create_event(event_type.cant_response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         return Response(
             response="Server problem",
             status=500,
@@ -371,6 +401,7 @@ def add_new_model(model:str):
     Add new reference object to reposity
     """
     if model not in start_service_instance.reposity.data.keys():
+        observe_service.create_event(event_type.cant_response_to_request(),request)
         return Response(
             status=404,
             response=f"There isn't model with name {model}",
@@ -387,6 +418,7 @@ def add_new_model(model:str):
             raise Exception
         result_format=factory_entity.create_default()()
         result=result_format.create([reference_object])
+        observe_service.create_event(event_type.response_to_request(),request)
         return Response(
             response=result,
             status=200,
@@ -394,6 +426,8 @@ def add_new_model(model:str):
             )
     except Exception as e:
         #raise e
+        observe_service.create_event(event_type.cant_response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         if str(e)=="Формат не верный":
             return Response(
                 status=404,
@@ -413,6 +447,7 @@ def change_model(model:str):
     Add new reference object to reposity
     """
     if model not in start_service_instance.reposity.data.keys():
+        observe_service.create_event(event_type.cant_response_to_request(),request)
         return Response(
             status=404,
             response=f"There isn't model with name {model}",
@@ -429,6 +464,7 @@ def change_model(model:str):
             raise Exception
         result_format=factory_entity.create_default()()
         result=result_format.create([reference_object])
+        observe_service.create_event(event_type.response_to_request(),request)
         return Response(
             response=result,
             status=200,
@@ -436,6 +472,8 @@ def change_model(model:str):
             )
     except Exception as e:
         #raise e
+        observe_service.create_event(event_type.cant_response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         if str(e)=="Формат не верный":
             return Response(
                 status=404,
@@ -455,6 +493,7 @@ def delete_model(model:str):
     Add new reference object to reposity
     """
     if model not in start_service_instance.reposity.data.keys():
+        observe_service.create_event(event_type.cant_response_to_request(),request)
         return Response(
             status=404,
             response=f"There isn't model with name {model}",
@@ -468,6 +507,7 @@ def delete_model(model:str):
             raise Exception("Cant delete this object")
         result_format=factory_entity.create_default()()
         result=result_format.create([reference_object])
+        observe_service.create_event(event_type.response_to_request(),request)
         return Response(
             response=result,
             status=200,
@@ -475,6 +515,8 @@ def delete_model(model:str):
             )
     except Exception as e:
         #raise e
+        observe_service.create_event(event_type.cant_response_to_request(),request)
+        observe_service.create_event(event_type.inner_error(),str(e))
         if str(e)=="Cant delete this object":
             return Response(
                 status=404,

@@ -27,6 +27,13 @@ class event_type:
     def added_new_object() -> str:
         return "added_new_object"
 
+
+    """
+    Событие - не удалось добавить объект
+    """
+    @staticmethod
+    def cant_add_object() -> str:
+        return "cant_add_object"
     """
     Событие - измненение существующего объекта
     """
@@ -49,12 +56,48 @@ class event_type:
         return "object_deleted"
 
     """
+    Событие - не удалось удалить объект
+    """
+    @staticmethod
+    def cant_delete_object() -> str:
+        return "cant_delete_object"
+
+    """
+    Событие - не удалось удалить объект
+    """
+    @staticmethod
+    def cant_delete_object() -> str:
+        return "cant_delete_object"
+
+
+    """
     Событие - смена даты блокировки
     """
     @staticmethod
     def changed_block_datetime() -> str:
         return "changed_block_datetime"
     
+    """
+    Событие - ответ на запрос
+    """
+    @staticmethod
+    def response_to_request() -> str:
+        return "response_to_request"
+
+    """
+    Событие - ошибка ответа на запрос
+    """
+    @staticmethod
+    def cant_response_to_request() -> str:
+        return "cant_response_to_request"
+
+    """
+    Событие - внутренняя ошибка
+    """
+    @staticmethod
+    def inner_error() -> str:
+        return "inner_error"
+
     """
     Получить список всех событий
     """

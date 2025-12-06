@@ -35,6 +35,7 @@ class reference_service:
             observe_service.create_event(event_type.added_new_object(),[start_service_instance.reposity,reference_object])
             return True
         except:
+            observe_service.create_event(event_type.cant_add_object(),[start_service_instance.reposity,reference_object])
             return False
     
     def delete(start_service_instance:start_service,reference_object:abstract_reference):
@@ -47,6 +48,7 @@ class reference_service:
             observe_service.create_event(event_type.object_deleted(),[start_service_instance.reposity,reference_object])
             return True
         except Exception as e:
+            observe_service.create_event(event_type.cant_delete_object(),[start_service_instance.reposity,reference_object])
             return False
     
     def change(start_service_instance:start_service,reference_object:abstract_reference):
